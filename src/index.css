@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  /* Breakpoint */
+  --breakpoint-xs: 30rem;
+  --breakpoint-2xl: 100rem;
+  --breakpoint-3xl: 120rem;
+  
+  /* color palates */
+  --color-primary: #FF0A81;
+  --color-secondary: #7D0EFB;
+  --color-primary-text: #0C0C0C;
+  --color-secondary-text: #FFFFFF;
+  --color-primary-background: #F5F5F5;
+  --color-utility-color: #00E040;
+  --color-utility-text: #FF5C33;
+}
