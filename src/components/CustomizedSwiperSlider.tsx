@@ -5,6 +5,7 @@ import "swiper/css/pagination"
 
 import useProductStore from "../store/useProductStore"
 import ProductCard from "./ProductCard"
+import { Product } from "../types/types"
 
 const CustomizedSwiperSlider = () => {
   const { products } = useProductStore()
@@ -41,7 +42,7 @@ const CustomizedSwiperSlider = () => {
           },
         }}
       >
-        {products.map((product) => (
+        {products.map((product:Product) => (
           <SwiperSlide key={product._id}>
             <ProductCard
               _id={product._id}

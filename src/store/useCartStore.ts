@@ -1,7 +1,31 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { fastStorage } from './storageManager';
-import { CartState } from '../types/types';
+import { CartItem } from '../types/types';
+
+
+interface CartState {
+  items: CartItem[];
+  deliveryCharge: number;
+  addToCart: (item: {
+    _id: string;
+    productName: string;
+    productImage: string;
+    price: number;
+    discountPrice?: number;
+  }) => void;
+  removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  clearCart: () => void;
+  
+  getSubtotalBeforeDiscount: () => number;
+  getSubtotalAfterDiscount: () => number;
+  getDeliveryCharge: () => number;
+  getTotalAmount: () => number;
+  getTotalSavings: () => number;
+  getSavingsPercentage: () => number;
+}
+
 
 const useCartStore = create<CartState>()(
   persist(

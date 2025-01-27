@@ -1,3 +1,5 @@
+// types.ts
+
 export interface ProtectedRouteProps {
   children: React.ReactNode;
 }
@@ -9,11 +11,12 @@ export interface LocationErrorProps {
 }
 
 export interface CustomButtonProps {
-  title: string;
-  onClick: () => void;
+  children?: React.ReactNode;  // Added to support button content
+  title?: string;
+  onClick?: (e: React.MouseEvent) => void;  // Made optional and added event type
   className?: string;
-  disabled: boolean;
-  loading: boolean;
+  disabled?: boolean;  // Made optional
+  loading?: boolean;   // Made optional
 }
 
 export interface LocationProps {
@@ -21,7 +24,7 @@ export interface LocationProps {
   longitude: number | null;
   error: string | null;
   setLocation: (lat: number, lon: number) => void;
-  requestLocation: () => void; 
+  requestLocation: () => void;
 }
 
 export interface UserLocation {
@@ -46,34 +49,38 @@ export interface OrderData {
 export interface ImageViewerProps {
   src: string;
   alt: string;
-  className: string;
+  className?: string;
   key?: string;
 }
 
+// Updated Category interface to match usage
 export interface Category {
   _id: string;
   categoryName: string;
   featuredImage: string;
+  description?: string;
 }
 
 export interface CategoryListItemProps {
-  category: {
-    _id: string;
-    categoryName: string;
-    featuredImage: string;
-  };
+  category: Category;
   isSelected: boolean;
   onPress: () => void;
 }
 
-export interface ProductCardProps {
+// Updated Product interface to match usage
+export interface Product {
   _id: string;
   productName: string;
-  productImages: { imageUrl: string; _id?: string }[];
+  description: string;
+  productImages: ProductImage[];
   price: number;
   discountPrice?: number;
-  description: string;
-  quantity?: number;
+  categoryId?: string;
+}
+
+export interface ProductImage {
+  imageUrl: string;
+  _id?: string;
 }
 
 export interface CartItem {
@@ -83,26 +90,4 @@ export interface CartItem {
   price: number;
   discountPrice?: number;
   quantity: number;
-}
-export interface CartState {
-  items: CartItem[];
-  deliveryCharge: number;
-  addToCart: (item: { 
-    _id: string;
-    productName: string;
-    productImage: string;
-    price: number;
-    discountPrice?: number;
-  }) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
-  clearCart: () => void;
-  
-  // Calculation methods
-  getSubtotalBeforeDiscount: () => number;
-  getSubtotalAfterDiscount: () => number;
-  getDeliveryCharge: () => number;
-  getTotalAmount: () => number;
-  getTotalSavings: () => number;
-  getSavingsPercentage: () => number;
 }

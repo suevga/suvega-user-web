@@ -2,8 +2,18 @@ import { Link } from 'react-router';
 import useCartStore from "../store/useCartStore";
 import ImageViewer from './ImageViewer';
 import CustomButton from './CustomButton';
-import { ProductCardProps } from '../types/types';
 import React from 'react';
+import { ProductImage } from '../types/types';
+
+interface ProductCardProps {
+  _id: string;
+  productName: string;
+  productImages: ProductImage[];
+  price: number;
+  discountPrice?: number;
+  description: string;
+  quantity?: number;
+}
 
 const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImages, price, discountPrice }) => {
   const { items, addToCart, updateQuantity } = useCartStore();
@@ -22,7 +32,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
       productName,
       productImage: convertToSecureUrl(productImages[0].imageUrl),
       price: discountPrice || price,
-      quantity: 1
     });
   };
 

@@ -1,21 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { fastStorage } from './storageManager';
+import { Product } from '../types/types';
 
-interface ProductImage {
-  url: string;
-  alt: string;
-}
 
-interface Product {
-  _id: string;
-  name: string;
-  description: string;
-  images: ProductImage[];
-  price: number;
-  discountPrice?: number;
-  categoryId?: string;
-}
 
 interface ProductState {
   products: Product[];

@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard';
 import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router';
+import { Product } from '../types/types';
 
 const CategoryPage = () => {
   const { categories } = useCategoryStore();
@@ -85,7 +86,7 @@ const CategoryPage = () => {
             <div className="p-4">
               {/* Updated grid configuration */}
               <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-                {filteredProducts?.map((product) => (
+                {filteredProducts?.map((product:Product) => (
                   <div key={product._id} className="w-full">
                     <ProductCard
                       _id={product._id}

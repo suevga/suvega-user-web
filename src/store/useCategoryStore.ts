@@ -1,14 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { fastStorage } from './storageManager';
+import { Category } from '../types/types';
 
-interface Category {
-  _id: string;
-  name: string;
-  image: string;
-  description?: string;
-  productCount?: number;
-}
 
 interface CategoryState {
   categories: Category[];
