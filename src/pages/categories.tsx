@@ -2,7 +2,7 @@ import useCategoryStore from '../store/useCategoryStore';
 import useProductStore from '../store/useProductStore';
 import ProductCard from '../components/ProductCard';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Search } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router';
 
 const CategoryPage = () => {

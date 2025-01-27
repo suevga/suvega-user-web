@@ -3,6 +3,8 @@ import { Link } from 'react-router';
 import CategoryCard from './CategoryCard';
 import useCategoryStore from '../store/useCategoryStore';
 
+
+
 const CategorySection = () => {
   const { categories } = useCategoryStore();
 
@@ -23,7 +25,6 @@ const CategorySection = () => {
         {categories && categories.slice(0, 6).map((category) => (
           <div key={category._id} className="w-full max-w-[200px] mx-auto h-full">
             <CategoryCard
-            key={category._id}
               _id={category._id}
               categoryName={category.categoryName}
               featuredImage={category.featuredImage}

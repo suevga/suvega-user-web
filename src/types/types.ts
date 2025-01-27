@@ -54,7 +54,6 @@ export interface Category {
   _id: string;
   categoryName: string;
   featuredImage: string;
-  productCount?: number;
 }
 
 export interface CategoryListItemProps {

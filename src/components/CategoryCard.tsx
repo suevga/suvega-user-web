@@ -1,9 +1,12 @@
-import React from 'react';
 import { Link } from 'react-router';
-import { Category } from '../types/types';
 
+interface CategoryCardProps {
+  _id: string;
+  categoryName: string;
+  featuredImage: string;
+}
 
-const CategoryCard: React.FC<Category> = ({ _id, categoryName, featuredImage }) => {
+const CategoryCard = ({ _id, categoryName, featuredImage }:CategoryCardProps) => {
   return (
     <Link to={`/categories/${_id}`} className="block w-full h-full">
       <div className="bg-white rounded-lg p-3 md:p-4 transition-all shadow-md h-full flex flex-col">
