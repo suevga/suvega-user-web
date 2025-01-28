@@ -132,7 +132,11 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route path="product/:productId" element={<SingleProductPage />} />
+              <Route path="/product/:productId" element={
+                <ProtectedRoute>
+                  <SingleProductPage/>
+                </ProtectedRoute>
+              } />
               <Route path="*" element={
                 <SignedIn>
                   <Navigate to="/" replace />
