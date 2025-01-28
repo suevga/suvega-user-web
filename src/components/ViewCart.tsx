@@ -26,7 +26,7 @@ export function withCartIndicator<P extends { [key: string]: any }>(
           <div className="fixed bottom-0 left-0 w-full z-50 sm:hidden pb-2">
             <CustomButton
               onClick={handleCartPress}
-              className="w-[95%] mx-auto block h-10 bg-secondary rounded-lg px-4 py-2 flex items-center justify-between shadow-md"
+              className="w-[95%] mx-auto h-10 bg-secondary rounded-lg px-4 py-2 flex items-center justify-between shadow-md"
             >
               <div className="flex items-center space-x-2">
                 <ShoppingCart width={24} height={24} color='#FF0A81'/>

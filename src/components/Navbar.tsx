@@ -1,19 +1,25 @@
 import { useState } from 'react';
-import { Search, ShoppingCart, MapPin, Menu, X, User } from 'lucide-react';
+import { ShoppingCart, MapPin, Menu, X, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import ImageViewer from './ImageViewer';
 import { Images } from '../constants/images';
 import CustomButton from './CustomButton';
 import useCartStore from '../store/useCartStore';
+import useProductStore from '../store/useProductStore';
+import { Product } from '../types/types';
+import SearchBar from './SearchBar';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useState('Pocket 25, Subhash Place');
   const { isSignedIn } = useUser();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const { signOut } = useClerk();
   const navigate = useNavigate();
   const { items }= useCartStore();
+  const { products } = useProductStore();
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -29,7 +35,24 @@ const Navbar = () => {
     await signOut();
     navigate('/login');
   };
+  
+  const handleProductClick = (productId: string) => {
+    try {
+      console.log('Attempting navigation to product:', productId);
+      setIsSearchActive(false);
+      setSearchQuery('');
+      navigate(`/product/${productId}`, { replace: true });
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+  };
 
+  const filteredProducts = searchQuery
+    ? (products || []).filter((product: Product) =>
+        product.productName.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+ 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white shadow z-50 rounded">
       {/* Desktop Navbar */}
@@ -64,11 +87,15 @@ const Navbar = () => {
           {/* Search Bar */}
           <div className="hidden sm:flex flex-1 max-w-xl mx-4">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search product here"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+              <SearchBar
+                className=""
+                isMobile={false}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                isSearchActive={isSearchActive}
+                setIsSearchActive={setIsSearchActive}
+                onProductClick={handleProductClick}
+                filteredProducts={filteredProducts}
               />
             </div>
           </div>
@@ -135,11 +162,15 @@ const Navbar = () => {
       {/* Mobile Search Bar */}
       <div className="sm:hidden px-1 py-2 border-t">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Search product here"
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+          <SearchBar
+            className=""
+            isMobile={true}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            isSearchActive={isSearchActive}
+            setIsSearchActive={setIsSearchActive}
+            onProductClick={handleProductClick}
+            filteredProducts={filteredProducts}
           />
         </div>
       </div>
@@ -179,10 +210,10 @@ const Navbar = () => {
               >
                 <ShoppingCart className="w-5 h-5" />
                 {cartItemsCount > 0 && (
-                <div className="bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartItemsCount}
-                </div>
-              )}
+                  <div className="bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                    {cartItemsCount}
+                  </div>
+                )}
               </Link>
             </div>
           </div>

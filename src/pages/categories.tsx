@@ -81,13 +81,13 @@ const CategoryPage = () => {
           </div>
         </aside>
 
-         {/* Products Grid */}
-         <div className="flex-1 min-w-0">
-            <div className="p-4">
-              {/* Updated grid configuration */}
-              <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-                {filteredProducts?.map((product:Product) => (
-                  <div key={product._id} className="w-full">
+        {/* Products Grid */}
+        <div className="flex-1 min-w-0">
+          <div className="p-4">
+            <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+              {filteredProducts?.map((product: Product) => (
+                <div key={product._id} className="w-full h-full">
+                  <div className="h-full flex flex-col">
                     <ProductCard
                       _id={product._id}
                       productName={product.productName}
@@ -97,18 +97,19 @@ const CategoryPage = () => {
                       discountPrice={product.discountPrice}
                     />
                   </div>
-                ))}
-              </div>
-              
-              {(!filteredProducts || filteredProducts.length === 0) && (
-                <div className="text-center py-8">
-                  <p className="text-gray-500 text-base">
-                    No products found in this category
-                  </p>
                 </div>
-              )}
+              ))}
             </div>
+            
+            {(!filteredProducts || filteredProducts.length === 0) && (
+              <div className="text-center py-8">
+                <p className="text-gray-500 text-base">
+                  No products found in this category
+                </p>
+              </div>
+            )}
           </div>
+        </div>
       </div>
     </div>
   );

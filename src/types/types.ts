@@ -91,3 +91,15 @@ export interface CartItem {
   discountPrice?: number;
   quantity: number;
 }
+
+// Separate interface for SearchBar props
+export interface SearchBarProps {
+  className?: string;
+  isMobile?: boolean;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  isSearchActive: boolean;
+  setIsSearchActive: (active: boolean) => void;
+  onProductClick: (productId: string) => void;
+  filteredProducts: Product[];
+}

@@ -54,12 +54,11 @@ const PublicRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   );
 };
 
-
-const AppRoutes = withCartIndicator(({ children }) => (
-  <div className="relative min-h-screen">
-    {children}
-  </div>
-));
+// Create wrapped versions of components that need the cart indicator
+const HomePageWithCart = withCartIndicator(HomePage);
+const CategoryPageWithCart = withCartIndicator(CategoryPage);
+const SingleProductPageWithCart = withCartIndicator(SingleProductPage);
+const ProfilePageWithCart = withCartIndicator(ProfilePage);
 
 function App() {
   const { error, requestLocation, openLocationSettings } = useLocation();
@@ -78,33 +77,32 @@ function App() {
   return (
     <ClerkProvider publishableKey={publishableKey}>
       <Router>
-        {
-          error ? (
-            <LocationError
-              message={error}
-              onRetry={requestLocation}
-              onOpenSettings={openLocationSettings}
-            />
-          ) : (
-          <AppRoutes>
+        {error ? (
+          <LocationError
+            message={error}
+            onRetry={requestLocation}
+            onOpenSettings={openLocationSettings}
+          />
+        ) : (
+          <div className="relative min-h-screen">
             <Routes>
               <Route path="/" element={
                 <ProtectedRoute>
-                  <HomePage />
+                  <HomePageWithCart />
                 </ProtectedRoute>
               } />
-  
+
               <Route path="/login" element={
                 <PublicRoute>
                   <LoginPage />
                 </PublicRoute>
               } />
-  
+
               <Route 
                 path="/categories" 
                 element={
                   <ProtectedRoute>
-                    <CategoryPage />
+                    <CategoryPageWithCart />
                   </ProtectedRoute>
                 } 
               />
@@ -112,7 +110,7 @@ function App() {
                 path="/categories/:categoryId" 
                 element={
                   <ProtectedRoute>
-                    <CategoryPage />
+                    <CategoryPageWithCart />
                   </ProtectedRoute>
                 } 
               />
@@ -128,13 +126,13 @@ function App() {
                 path="/profile" 
                 element={
                   <ProtectedRoute>
-                    <ProfilePage />
+                    <ProfilePageWithCart />
                   </ProtectedRoute>
                 } 
               />
               <Route path="/product/:productId" element={
                 <ProtectedRoute>
-                  <SingleProductPage/>
+                  <SingleProductPageWithCart />
                 </ProtectedRoute>
               } />
               <Route path="*" element={
@@ -143,13 +141,11 @@ function App() {
                 </SignedIn>
               } />
             </Routes>
-          </AppRoutes>
-          )
-        }
+          </div>
+        )}
       </Router>
     </ClerkProvider>
   )
 }
-
 
 export default App
