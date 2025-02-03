@@ -1,5 +1,3 @@
-// types.ts
-
 export interface ProtectedRouteProps {
   children: React.ReactNode;
 }
@@ -7,7 +5,7 @@ export interface ProtectedRouteProps {
 export interface LocationErrorProps {
   message: string;
   onRetry: () => void;
-  onOpenSettings: () => void;
+  onOpenSettings?: () => void;
 }
 
 export interface CustomButtonProps {
@@ -27,16 +25,14 @@ export interface LocationProps {
   requestLocation: () => void;
 }
 
-export interface UserLocation {
-  latitude: number;
-  longitude: number;
-}
 
 export interface UserData {
   id?: string;
   phoneNumber?: string;
   email?: string;
   name?: string;
+  address: Address[];
+  [key: string]: any;
 }
 
 export interface OrderData {
@@ -103,3 +99,41 @@ export interface SearchBarProps {
   onProductClick: (productId: string) => void;
   filteredProducts: Product[];
 }
+
+export interface RegisterUserData {
+  phoneNumber: string;
+  email: string;
+  location: {
+    type: string;
+    coordinates: [number, number]; // [longitude, latitude]
+  };
+}
+
+export interface LocationData {
+  type: string;
+  coordinates: [number | null, number | null]; 
+}
+
+export interface DarkStore {
+  _id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface Address {
+  _id: string;
+  type: 'Home' | 'Work' | 'Other';
+  fullName: string;
+  addressLine: string;
+  city: string;
+  pinCode: string;
+  landmark?: string;
+}
+
+export interface AddressFormProps {
+  onClose: () => void;
+}
+
+// Address Form Data
+export interface AddressFormData extends Omit<Address, 'id'> {}

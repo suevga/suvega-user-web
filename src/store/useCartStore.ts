@@ -1,13 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { fastStorage } from './storageManager';
+import { fastStorage } from '../store/storageManager';
 import { CartItem } from '../types/types';
 
-
-interface CartState {
+export interface CartState {
   items: CartItem[];
   deliveryCharge: number;
-  addToCart: (item: {
+  addToCart: (item: { 
     _id: string;
     productName: string;
     productImage: string;
@@ -18,6 +17,7 @@ interface CartState {
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   
+  // Calculation methods
   getSubtotalBeforeDiscount: () => number;
   getSubtotalAfterDiscount: () => number;
   getDeliveryCharge: () => number;
@@ -26,12 +26,12 @@ interface CartState {
   getSavingsPercentage: () => number;
 }
 
-
 const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
       deliveryCharge: 25,
+
       addToCart: (item) => set((state) => {
         const effectivePrice = item.discountPrice || item.price;
         const existingItem = state.items.find((cartItem) => cartItem._id === item._id);
@@ -54,7 +54,7 @@ const useCartStore = create<CartState>()(
               productName: item.productName,
               productImage: item.productImage,
               price: item.price,
-              discountPrice: effectivePrice,
+              discountPrice: effectivePrice,  // Store original discountPrice without modification
               quantity: 1,
             },
           ],
@@ -104,7 +104,9 @@ const useCartStore = create<CartState>()(
       },
 
       getTotalSavings: () => {
-        return get().getSubtotalBeforeDiscount() - get().getSubtotalAfterDiscount();
+        const beforeDiscount = get().getSubtotalBeforeDiscount();
+        const afterDiscount = get().getSubtotalAfterDiscount();
+        return beforeDiscount - afterDiscount;
       },
 
       getSavingsPercentage: () => {

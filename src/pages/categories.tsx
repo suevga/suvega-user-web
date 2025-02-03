@@ -5,13 +5,28 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router';
 import { Product } from '../types/types';
+import useUserStore from '../store/useUserStore';
 
 const CategoryPage = () => {
   const { categories } = useCategoryStore();
   const { products } = useProductStore();
   const { categoryId } = useParams();
+  const { userData } = useUserStore();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
+  console.log("categories in my category page::", categories);
+  const defaultAddress = userData?.address?.[0];
+  const formatAddress = () => {
+    if (!defaultAddress) return 'Add delivery address';
+    
+    const parts = [];
+    if (defaultAddress.city) parts.push(defaultAddress.city);
+    if (defaultAddress.pinCode) parts.push(defaultAddress.pinCode);
+    
+    return parts.join(', ');
+  };
+
+  
   useEffect(() => {
     if (categoryId) {
       setSelectedCategoryId(categoryId)
@@ -45,7 +60,9 @@ const CategoryPage = () => {
             <div className="flex-1">
               <div className="flex flex-col">
                 <h1 className="text-sm font-medium">Delivery in 15 minutes</h1>
-                <p className="text-xs text-gray-500">Lakwa, India</p>
+                <p className="text-xs text-gray-500">
+                  {formatAddress()}
+                </p>
               </div>
             </div>
           </div>

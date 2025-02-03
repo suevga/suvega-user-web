@@ -9,10 +9,11 @@ import useCartStore from '../store/useCartStore';
 import useProductStore from '../store/useProductStore';
 import { Product } from '../types/types';
 import SearchBar from './SearchBar';
+import useUserStore from '../store/useUserStore';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [location] = useState('Pocket 25, Subhash Place');
+  const { userData } = useUserStore();
   const { isSignedIn } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -22,6 +23,26 @@ const Navbar = () => {
   const { products } = useProductStore();
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
+
+  const defaultAddress = userData?.address?.[0];
+  const formatAddress = () => {
+    if (!defaultAddress) return 'Add delivery address';
+    
+    const parts = [];
+    if (defaultAddress.addressLine) parts.push(defaultAddress.addressLine);
+    if (defaultAddress.city) parts.push(defaultAddress.city);
+    if (defaultAddress.pinCode) parts.push(defaultAddress.pinCode);
+    
+    return parts.join(', ');
+  };
+
+  const handleAddressClick = () => {
+    if (!isSignedIn) {
+      navigate('/login');
+      return;
+    }
+    navigate('/address');
+  };
 
   const handleAuthAction = () => {
     if (isSignedIn) {
@@ -71,7 +92,12 @@ const Navbar = () => {
           <div className="flex sm:hidden items-center space-x-1 flex-1">
             <div className="flex flex-col items-start">
               <span className="text-sm font-semibold">Delivery in 15 minutes</span>
-              <span className="text-sm truncate text-ellipsis">{location}</span>
+              <button 
+                onClick={handleAddressClick}
+                className="text-sm text-gray-600 truncate text-ellipsis max-w-[200px] hover:text-primary"
+              >
+                {formatAddress()}
+              </button>
             </div>
           </div>
 
@@ -80,7 +106,12 @@ const Navbar = () => {
             <span className="font-bold text-primary-text">Delivery in 15 minutes</span>
             <div className="flex items-center text-gray-700">
               <MapPin className="w-4 h-4" color="#FF0A81"/>
-              <span className="max-w-[200px] truncate font-semibold">{location}</span>
+              <button 
+                onClick={handleAddressClick}
+                className="text-sm text-gray-600 truncate text-ellipsis max-w-[200px] hover:text-primary"
+              >
+                {formatAddress()}
+              </button>
             </div>
           </div>
 
@@ -116,6 +147,18 @@ const Navbar = () => {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Profile
+                  </Link>
+                  <Link
+                    to="/address"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    my addresses
+                  </Link>
+                  <Link
+                    to="/orders"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    my orders
                   </Link>
                   <CustomButton
                     onClick={handleSignOut}
@@ -185,9 +228,21 @@ const Navbar = () => {
                 <>
                   <Link 
                     to="/profile"
-                    className="block w-full text-left py-2 text-gray-700 hover:text-primary"
+                    className="block px-4  w-full text-sm py-2 text-gray-700 hover:text-primary"
                   >
-                    Profile
+                    my account
+                  </Link>
+                  <Link
+                    to="/address"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    my addresses
+                  </Link>
+                  <Link
+                    to="/orders"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    my orders
                   </Link>
                   <CustomButton 
                     onClick={handleSignOut}

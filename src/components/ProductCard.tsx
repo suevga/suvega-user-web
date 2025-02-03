@@ -31,10 +31,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
       _id,
       productName,
       productImage: convertToSecureUrl(productImages[0].imageUrl),
-      price: discountPrice || price,
+      price: price,
+      discountPrice: discountPrice
     });
   };
-
+  
   const handleIncreaseQuantity = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();

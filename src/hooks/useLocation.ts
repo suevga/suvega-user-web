@@ -1,66 +1,33 @@
 import { useState, useEffect } from 'react'
 import { useLocationStore } from '../store/useLocationStore'
+import { useGoogleLocation } from './useGoogleLocation';
+import { envConfig } from '../utilits/envConfig';
+
 
 export const useLocation = () => {
   const [error, setError] = useState<string | null>(null)
-  const { latitude, longitude, setLocation } = useLocationStore()
+  const { latitude, longitude, setLocation, setLoading } = useLocationStore()
+  const { getCurrentLocation } = useGoogleLocation(envConfig.googleApiKey);
 
   const requestLocation = async () => {
-    if ('permissions' in navigator && 'geolocation' in navigator) {
-      try {
-        // First, query the permission state
-        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' })
-        
-        if (permissionStatus.state === 'denied') {
-          setError('Location access is blocked. Please reset location permissions in your browser settings and try again.')
-          return
-        }
-
-        // Request the location
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setLocation(position.coords.latitude, position.coords.longitude)
-            setError(null)
-          },
-          (err) => {
-            // Handle specific geolocation errors
-            let errorMessage = 'Unable to retrieve your location. '
-            
-            switch (err.code) {
-              case err.PERMISSION_DENIED:
-                errorMessage += 'Please allow location access in your browser settings.'
-                break
-              case err.POSITION_UNAVAILABLE:
-                errorMessage += 'Location information is unavailable.'
-                break
-              case err.TIMEOUT:
-                errorMessage += 'The request to get location timed out.'
-                break
-              default:
-                errorMessage += 'An unknown error occurred.'
-            }
-            
-            setError(errorMessage)
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0 // Force fresh location request
-          }
-        )
-      } catch (error) {
-        setError('An error occurred while requesting location access.')
-      }
-    } else {
-      setError('Geolocation is not supported by your browser.')
+    console.log("🔵 Requesting location...");
+    try {
+      setLoading(true);
+      const location = await getCurrentLocation();
+      setLocation(location.latitude, location.longitude);
+      setError(null);
+    } catch (err) {
+      console.error("❌ Location fetch error:", err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to get location';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    if (!latitude || !longitude) {
-      requestLocation()
-    }
-  }, [latitude, longitude])
+    requestLocation() // Always fetch location on mount
+  }, [])
 
   return { 
     latitude, 
@@ -80,4 +47,3 @@ export const useLocation = () => {
     }
   }
 }
-

@@ -1,31 +1,38 @@
 import { create } from 'zustand';
-import { LocationProps } from '../types/types';
+import { persist } from "zustand/middleware";
 
-export const useLocationStore = create<LocationProps>((set) => ({
-  latitude: null,
-  longitude: null,
-  error: null,
-  setLocation: (lat, lon) => set({ latitude: lat, longitude: lon, error: null }),
-  requestLocation: async () => {
-    try {
-      // Requesting user's current location from the browser.
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => {
-          set({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-            error: null,
-          });
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-          set({ error: error.message });
-        }
-      );
-    } catch (err) {
-      console.error('Unexpected error during location request:', err);
-      set({ error: 'Unexpected error occurred.' });
+interface LocationState {
+  latitude: number | null;
+  longitude: number | null;
+  error: string | null;
+  isLoading: boolean;
+  setLocation: (lat: number, lon: number) => void;
+  setError: (error: string | null) => void;
+  setLoading: (loading: boolean) => void;
+}
+
+export const useLocationStore = create<LocationState>()(
+  persist(
+    (set) => ({
+      latitude: null,
+      longitude: null,
+      error: null,
+      isLoading: false,
+      setLocation: (lat, lon) => set({ 
+        latitude: lat, 
+        longitude: lon,
+        error: null,
+        isLoading: false
+      }),
+      setError: (error) => set({ error, isLoading: false }),
+      setLoading: (loading) => set({ isLoading: loading })
+    }),
+    {
+      name: "location-store",
+      partialize: (state) => ({ 
+        latitude: state.latitude,
+        longitude: state.longitude
+      })
     }
-  },
-  
-}));
+  )
+);

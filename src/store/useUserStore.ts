@@ -1,37 +1,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { fastStorage } from "./storageManager";
+import { Address, DarkStore, LocationData } from "../types/types";
 
-interface DarkStore {
-  _id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-}
 
-interface Address {
-  id: string;
-  type: string;
-  name: string;
-  phoneNumber: string;
-  addressLine: string;
-  city: string;
-  pinCode: string;
-  landmark: string;
-}
 
-interface UserLocation {
-  latitude: number;
-  longitude: number;
-}
-
-interface UserDataProps {
+export interface UserDataProps {
   _id: string;
   name: string;
   phoneNumber: string;
-  storeId: string;
+  storeId: string[]; // Changed from string to string[]
   address: Address[];
-  location: UserLocation;
+  location: LocationData;
   cartItem: string[];
   createdAt: string;
   updatedAt: string;
@@ -40,6 +20,7 @@ interface UserDataProps {
 
 interface UserProps {
   userId: string | null;
+  phoneNumber: string | null;
   userData: UserDataProps | null;
   addresses: Address[] | null;
   darkStores: DarkStore | null;
@@ -47,6 +28,7 @@ interface UserProps {
 
   // Actions
   setUserId: (id: string) => void;
+  setPhoneNumber: (phone: string) => void;
   setUserData: (data: UserDataProps) => void;
   updateUserData: (data: UserDataProps) => void;
   setOutOfService: (data: boolean) => void;
@@ -63,12 +45,14 @@ const useUserStore = create<UserProps>()(
     (set)=> ({
       userId: null,
       userData: null,
+      phoneNumber: null,
       addresses: null,
       darkStores: null,
       outOfService: false,
       
       setUserId: (id) => set({ userId: id }),
       setUserData: (data) => set({ userData: data }),
+      setPhoneNumber:(phone) =>set({phoneNumber:phone}),
       updateUserData: (data) => set({ userData: data }),
       setAddresses: (addresses) => set({ addresses }),
       setDarkStore: (store) => set({ darkStores: store }),
@@ -76,13 +60,14 @@ const useUserStore = create<UserProps>()(
       resetUser: () => set({ userId: "", userData: null, outOfService: false }),
       clearUserID: () => set({ userId: null }),
       deleteAddress: (id) => set((state) => ({
-        addresses: state.addresses?.filter((address) => address.id !== id) || null,
+        addresses: state.addresses?.filter((address) => address._id !== id) || null,
       })),
     }),
     {
       name: "user-store",
       partialize: (state)=> ({
         userData: state.userData,
+        phoneNumber: state.phoneNumber,
         addresses: state.addresses,
         userId: state.userId,
         darkStores: state.darkStores,

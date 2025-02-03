@@ -6,19 +6,31 @@ import useCartStore from '../store/useCartStore';
 import SearchBar from '../components/SearchBar';
 import ImageViewer from '../components/ImageViewer';
 import CustomButton from '../components/CustomButton';
+import useUserStore from '../store/useUserStore';
 
 const SingleProductPage = () => {
   const { productId } = useParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  
+  const { userData } = useUserStore();
   const { products, getProductById } = useProductStore();
   const { items, addToCart, updateQuantity } = useCartStore();
   
   const product = getProductById(productId || '');
   const cartItem = items.find(item => item._id === productId);
   const quantity = cartItem?.quantity || 0;
+
+  const defaultAddress = userData?.address?.[0];
+  const formatAddress = () => {
+    if (!defaultAddress) return 'Add delivery address';
+    
+    const parts = [];
+    if (defaultAddress.city) parts.push(defaultAddress.city);
+    if (defaultAddress.pinCode) parts.push(defaultAddress.pinCode);
+    
+    return parts.join(', ');
+  };
 
   const filteredProducts = products.filter(p => 
     p.productName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -66,7 +78,9 @@ const SingleProductPage = () => {
           <div className="flex-1">
             <div className="flex flex-col">
               <h1 className="text-sm font-medium">Delivery in 15 minutes</h1>
-              <p className="text-xs text-gray-500">Lakwa, India</p>
+              <p className="text-xs text-gray-500">
+                {formatAddress()}
+              </p>
             </div>
           </div>
         </div>
@@ -110,6 +124,7 @@ const SingleProductPage = () => {
                       ${selectedImageIndex === index ? 'border-primary' : 'border-gray-200'}`}
                   >
                     <ImageViewer
+                      key={image._id}
                       src={image.imageUrl}
                       alt={`${product.productName} - ${index + 1}`}
                       className="w-full h-full object-contain"
