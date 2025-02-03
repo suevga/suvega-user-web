@@ -2,8 +2,8 @@ import axios from "axios";
 import { envConfig } from "./envConfig";
 
 const axiosInstance = axios.create({
-  // baseURL: envConfig.apiUrl,
-  baseURL: "http://localhost:8080",
+  baseURL: envConfig.apiUrl,
+  // baseURL: "http://localhost:8080",
   timeout: 50000,
   headers: {
     'Content-Type': 'application/json',
