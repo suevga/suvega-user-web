@@ -16,6 +16,8 @@ const CartPage: React.FC = () => {
   
   const addresses = userData?.address || [];
 
+  console.log("user data in cart page::", userData);
+  
   const defaultAddress = userData?.address?.[0];
   const formatAddress = () => {
     if (!defaultAddress) return 'Add delivery address';
@@ -118,7 +120,7 @@ const CartPage: React.FC = () => {
           <CartItems />
           <BillDetails />
         </div>
-        <div className="mt-5">
+        <div className="mt-5 max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
           {addresses.length > 0 ? (
             <div className="space-y-3">
               {addresses.map((address) => (
@@ -172,7 +174,7 @@ const CartPage: React.FC = () => {
             <button
               onClick={handleAddAddress}
               className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-primary-text font-medium 
-                       hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                       hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               + Add New Address
             </button>
@@ -184,7 +186,7 @@ const CartPage: React.FC = () => {
                         ${selectedAddressId && !isLoading
                           ? 'bg-primary hover:bg-primary/90' 
                           : 'bg-gray-400 cursor-not-allowed'} 
-                        transition-colors flex items-center justify-center gap-2`}
+                        transition-colors flex items-center justify-center gap-2 cursor-pointer`}
             >
               {isLoading ? (
                 <>

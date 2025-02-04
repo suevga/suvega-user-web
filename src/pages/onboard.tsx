@@ -6,7 +6,7 @@ import { useLocationStore } from '../store/useLocationStore';
 import { useApiStore } from '../hooks/useApiStore';
 import { Loader2 } from 'lucide-react';
 import { LocationData } from '../types/types';
-
+import { toast } from 'react-toastify';
 
 
 const OnboardPage = () => {
@@ -60,6 +60,7 @@ const OnboardPage = () => {
       console.log("user registered::", userExists);
       
       if (userExists.isRegistered) {
+        toast.done("user already registered")
         setUserData(userExists.user);
         setStoredPhoneNumber(phoneNumber);
         navigate('/');
@@ -85,6 +86,7 @@ const OnboardPage = () => {
         
         
         if (registeredUser) {
+          toast.done("user registered sucessfully")
           setUserData(registeredUser);
           setStoredPhoneNumber(phoneNumber);
           navigate('/');
@@ -97,6 +99,7 @@ const OnboardPage = () => {
           phoneNumber: phoneNumber,
         } as any);
         setStoredPhoneNumber(phoneNumber);
+        toast.error("error when user register")
         navigate('/');
       }
       setStoredPhoneNumber(phoneNumber);
@@ -143,7 +146,7 @@ const OnboardPage = () => {
           
           <button 
             type="submit" 
-            className="w-full bg-primary text-secondary-text py-2 px-4 rounded-md hover:opacity-90 transition-opacity cursor-pointer"
+            className="w-full bg-primary text-secondary-text text-center py-2 px-4 rounded-md hover:opacity-90 transition-opacity cursor-pointer"
           >
             {
               loading ? <Loader2/> : "continue"

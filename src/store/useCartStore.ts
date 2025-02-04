@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { fastStorage } from '../store/storageManager';
+import { fastStorage } from './storageManager';
 import { CartItem } from '../types/types';
 
 export interface CartState {
@@ -12,6 +12,7 @@ export interface CartState {
     productImage: string;
     price: number;
     discountPrice?: number;
+    darkStore: string; // Add darkStore ID
   }) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -24,6 +25,7 @@ export interface CartState {
   getTotalAmount: () => number;
   getTotalSavings: () => number;
   getSavingsPercentage: () => number;
+  getItemsByDarkStore: () => { [darkStoreId: string]: CartItem[] };
 }
 
 const useCartStore = create<CartState>()(
@@ -54,8 +56,9 @@ const useCartStore = create<CartState>()(
               productName: item.productName,
               productImage: item.productImage,
               price: item.price,
-              discountPrice: effectivePrice,  // Store original discountPrice without modification
+              discountPrice: effectivePrice,
               quantity: 1,
+              darkStore: item.darkStore, // Store darkStore ID with item
             },
           ],
         };
@@ -116,6 +119,18 @@ const useCartStore = create<CartState>()(
         if (subtotalBeforeDiscount === 0) return 0;
         
         return (totalSavings / subtotalBeforeDiscount) * 100;
+      },
+
+      getItemsByDarkStore: () => {
+        const items = get().items;
+        return items.reduce((grouped, item) => {
+          const darkStoreId = item.darkStore;
+          if (!grouped[darkStoreId]) {
+            grouped[darkStoreId] = [];
+          }
+          grouped[darkStoreId].push(item);
+          return grouped;
+        }, {} as { [darkStoreId: string]: CartItem[] });
       },
     }),
     {
