@@ -6,6 +6,7 @@ import { AddressFormData, AddressFormProps, LocationData } from '../types/types'
 import { useUser } from '@clerk/clerk-react';
 import { useLocationStore } from '../store/useLocationStore';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,6 +31,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
 
   const handleUpdateAddress = async (formData: AddressFormData) => {
     if (!userData?._id) {
+      toast.error('User data is required for updating address');
       throw new Error('User data is required for updating address');
     }
 
@@ -46,6 +48,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
     
     
     if (!updatedUser) {
+      toast.error('Failed to update address');
       throw new Error('Failed to update address');
     }
 
@@ -54,6 +57,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
 
   const handleUserRegistration = async () => {
     if (!phoneNumber || !user?.emailAddresses[0]?.emailAddress) {
+      toast.error("phone number and email are required");
       throw new Error('Phone number and email are required');
     }
 
@@ -63,6 +67,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
     );
 
     if (userCheck.isRegistered) {
+      toast.success("User already registered");
       setUserData(userCheck.user);
       return userCheck.user;
     }
@@ -79,9 +84,10 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
     );
 
     if (!registeredUser) {
+      toast.error('Failed to register user');
       throw new Error('Failed to register user');
     }
-
+    toast.success("User registered successfully");
     setUserData(registeredUser);
     return registeredUser;
   };
@@ -89,6 +95,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
   const onSubmit = async (formData: AddressFormData) => {
     setError(null);
     if (!phoneNumber) {
+      toast.error("Phone number is required");
       setError("Phone number is required");
       return;
     }

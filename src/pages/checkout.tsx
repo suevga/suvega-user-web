@@ -4,6 +4,7 @@ import useCartStore from '../store/useCartStore';
 import useUserStore from '../store/useUserStore';
 import { useApiStore } from '../hooks/useApiStore';
 import { AlertCircle, CreditCard, Truck, MapPin, ArrowLeft, Loader2 } from 'lucide-react';
+import { toast } from 'react-toastify'; 
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,19 +33,24 @@ const CheckoutPage: React.FC = () => {
     return parts.join(', ');
   };
 
+  console.log("default address in my checkout page::", defaultAddress);
+  
   useEffect(() => {
     if (!userData) {
+      toast.error('User not authenticated');
       navigate('/login');
     }
   }, [userData, navigate]);
-
+  
   const handleCreateOrder = async () => {
     if (!userData?._id) {
+      toast.error('User not authenticated for creating order');
       setError('User not authenticated');
       return;
     }
-
+    
     if (items.length === 0) {
+      toast.error('your cart is empty');
       setError('Cart is empty');
       return;
     }
@@ -69,6 +75,7 @@ const CheckoutPage: React.FC = () => {
       console.log("order response in my checkout page::", orderResponse);
       
       if (orderResponse && orderResponse.userId) {
+        toast.done('Order placed successfully');
         useCartStore.getState().clearCart();
         navigate('/orders');
       }

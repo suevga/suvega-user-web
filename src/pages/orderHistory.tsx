@@ -6,6 +6,7 @@ import axiosInstance from '../utilits/axiosInstance';
 import { socketService } from '../services/customerSocket.service';
 import useUserStore from '../store/useUserStore';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 type OrderStatus = "pending" | "accepted" | "rejected" | "pickup" | "delivered" | "cancelled";
 
@@ -22,13 +23,12 @@ const OrderHistory = () => {
     setModalOpen,
     updateOrderStatus,
     updateRiderLocation,
-    getActiveOrders,
-    getCompletedOrders,
-    getCancelledOrders
+    getOrdersByStatus,
   } = useOrderStore();
 
   useEffect(() => {
     if (!userData?._id) {
+      toast.error('Please login to view your orders');
       navigate('/login');
       return;
     }
@@ -37,7 +37,9 @@ const OrderHistory = () => {
       try {
         const response = await axiosInstance.get(`/api/v1/order/user-orders/${userData._id}`);
         setOrders(response.data.data.orders);
+        toast.success('Orders fetched successfully');
       } catch (error) {
+        toast.error('Error fetching orders');
         console.error('Error fetching orders:', error);
       }
     };
@@ -198,9 +200,12 @@ const OrderHistory = () => {
       <h1 className="text-lg font-bold mb-6">My Orders</h1>
 
       <div className="space-y-8">
-        <OrderSection title="Active Orders" orders={getActiveOrders()} />
-        <OrderSection title="Completed Orders" orders={getCompletedOrders()} />
-        <OrderSection title="Cancelled Orders" orders={getCancelledOrders()} />
+      <OrderSection title="Pending Orders" orders={getOrdersByStatus('pending').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
+        <OrderSection title="Accepted Orders" orders={getOrdersByStatus('accepted').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
+        <OrderSection title="Orders Out for Delivery" orders={getOrdersByStatus('pickup').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
+        <OrderSection title="Delivered Orders" orders={getOrdersByStatus('delivered').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
+        <OrderSection title="Cancelled Orders" orders={getOrdersByStatus('cancelled').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
+        <OrderSection title="Rejected Orders" orders={getOrdersByStatus('rejected').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
       </div>
 
       {/* Order Details Modal */}

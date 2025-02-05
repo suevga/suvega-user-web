@@ -72,17 +72,20 @@ const CartPage: React.FC = () => {
 
   const handleCloseAddressForm = () => {
     setShowAddressForm(false);
-    // If no address is selected and addresses exist, select the first one
     if (!selectedAddressId && addresses.length > 0) {
       setSelectedAddressId(addresses[0]._id);
     }
   };
+  
+  console.log("selected address id::", selectedAddressId);
   
   const handlePaymentClick = async () => {
     if (!selectedAddressId) {
       console.error('No address selected');
       return;
     }
+    console.log("selected address id::", selectedAddressId);
+    
     
     setIsLoading(true);
     try {
@@ -95,7 +98,8 @@ const CartPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-
+  console.log("here is my address::", addresses);
+  
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-3 md:px-4 pb-24">
