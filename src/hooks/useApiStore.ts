@@ -138,11 +138,14 @@ export const useApiStore = () => {
     }
   }, []);
 
-  const createOrder = useCallback(async (orderDetails: any) => {
+  const createOrder = useCallback(async (userId: string, orderDetails: any) => {
     setLoading(true);
     try {
-      const response = await axiosInstance.post('/api/v1/orders/create', orderDetails);
-      setOrder(response.data.order);
+      const response = await axiosInstance.post(`/api/v1/order/create/${userId}`, orderDetails);
+      console.log("order response after placing order::", JSON.stringify(response.data.data.order));
+      
+      setOrder(response.data.data.order);
+      return response.data.data.order;
     } catch (err) {
       setError('Order creation failed');
     } finally {

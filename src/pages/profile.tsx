@@ -74,7 +74,7 @@ const ProfilePage = () => {
           </div>
 
           <div className="space-y-4">
-            {userData.address.map((address, index) => (
+            {userData && userData.address &&  userData.address.map((address, index) => (
               <div 
                 key={address._id} 
                 className="border rounded-lg p-4 hover:border-blue-500 transition-colors"

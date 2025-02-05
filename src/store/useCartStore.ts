@@ -6,13 +6,13 @@ import { CartItem } from '../types/types';
 export interface CartState {
   items: CartItem[];
   deliveryCharge: number;
+  maxQuantityPerItem: number;
   addToCart: (item: { 
     _id: string;
     productName: string;
     productImage: string;
     price: number;
     discountPrice?: number;
-    darkStore: string; // Add darkStore ID
   }) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -25,24 +25,27 @@ export interface CartState {
   getTotalAmount: () => number;
   getTotalSavings: () => number;
   getSavingsPercentage: () => number;
-  getItemsByDarkStore: () => { [darkStoreId: string]: CartItem[] };
+  getItemCount: () => number;
+  getItemQuantity: (productId: string) => number;
 }
+
+
 
 const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
       deliveryCharge: 25,
+      maxQuantityPerItem: 5,
 
       addToCart: (item) => set((state) => {
-        const effectivePrice = item.discountPrice || item.price;
         const existingItem = state.items.find((cartItem) => cartItem._id === item._id);
         
         if (existingItem) {
           return {
             items: state.items.map((cartItem) =>
               cartItem._id === item._id
-                ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                ? { ...cartItem, quantity: Math.min(cartItem.quantity + 1, state.maxQuantityPerItem) }
                 : cartItem
             ),
           };
@@ -56,9 +59,8 @@ const useCartStore = create<CartState>()(
               productName: item.productName,
               productImage: item.productImage,
               price: item.price,
-              discountPrice: effectivePrice,
+              discountPrice: item.discountPrice,
               quantity: 1,
-              darkStore: item.darkStore, // Store darkStore ID with item
             },
           ],
         };
@@ -78,7 +80,7 @@ const useCartStore = create<CartState>()(
         return {
           items: state.items.map((item) =>
             item._id === id
-              ? { ...item, quantity }
+              ? { ...item, quantity: Math.min(quantity, state.maxQuantityPerItem) }
               : item
           ),
         };
@@ -121,16 +123,13 @@ const useCartStore = create<CartState>()(
         return (totalSavings / subtotalBeforeDiscount) * 100;
       },
 
-      getItemsByDarkStore: () => {
-        const items = get().items;
-        return items.reduce((grouped, item) => {
-          const darkStoreId = item.darkStore;
-          if (!grouped[darkStoreId]) {
-            grouped[darkStoreId] = [];
-          }
-          grouped[darkStoreId].push(item);
-          return grouped;
-        }, {} as { [darkStoreId: string]: CartItem[] });
+      getItemCount: () => {
+        return get().items.length;
+      },
+
+      getItemQuantity: (productId: string) => {
+        const item = get().items.find(item => item._id === productId);
+        return item ? item.quantity : 0;
       },
     }),
     {

@@ -59,7 +59,7 @@ const CartItems = () => {
               <div className="flex justify-between items-center w-full">
                 <div className="flex items-center">
                   <button
-                    className="p-1.5 md:p-2 bg-gray-200 rounded text-sm md:text-base"
+                    className="p-1.5 md:p-2 bg-gray-200 rounded text-sm md:text-base cursor-pointer"
                     onClick={() => handleDecreaseQuantity(item._id, item.quantity)}
                   >
                     -
@@ -68,7 +68,7 @@ const CartItems = () => {
                     {item.quantity}
                   </span>
                   <button
-                    className="p-1.5 md:p-2 bg-gray-200 rounded text-sm md:text-base"
+                    className="p-1.5 md:p-2 bg-gray-200 rounded text-sm md:text-base cursor-pointer"
                     onClick={() => handleIncreaseQuantity(item._id, item.quantity)}
                   >
                     +
@@ -76,7 +76,7 @@ const CartItems = () => {
                 </div>
 
                 <button
-                  className="text-sm md:text-base text-red-500 hover:text-red-600 transition-colors"
+                  className="text-sm md:text-base text-red-500 hover:text-red-600 transition-colors cursor-pointer"
                   onClick={() => removeFromCart(item._id)}
                 >
                   Remove
