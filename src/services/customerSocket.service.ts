@@ -1,5 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { toast } from 'react-toastify';
+import { envConfig } from '../utilits/envConfig';
 
 interface OrderUpdate {
   orderId: string;
@@ -24,10 +25,11 @@ class SocketService {
     return new Promise((resolve, reject) => {
       try {
         this.userId = userId;
-        this.socket = io(import.meta.env.VITE_API_URL, {
-          auth: { userId }
+        this.socket = io(envConfig.apiUrl, {
+          query: { userId }
         });
-
+        console.log("this is my userId::", this.userId);
+        
         this.socket.on('connect', () => {
           console.log('Socket connected');
           this.socket?.emit('joinRoom', { type: 'user', id: userId });
