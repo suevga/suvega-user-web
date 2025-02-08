@@ -96,7 +96,7 @@ export interface SearchBarProps {
   setSearchQuery: (query: string) => void;
   isSearchActive: boolean;
   setIsSearchActive: (active: boolean) => void;
-  onProductClick: (productId: string) => void;
+  // onProductClick: (productId: string) => void;
   filteredProducts: Product[];
 }
 

@@ -5,6 +5,8 @@ import CartItems from '../components/CartItems';
 import BillDetails from '../components/BillDetails';
 import { useNavigate } from 'react-router';
 import { AddressForm } from '../components/AddressForm';
+import { Address } from '../types/types'; // Make sure to import Address type
+import { toast } from 'react-toastify';
 
 const CartPage: React.FC = () => {
   const { userData, updateUserData } = useUserStore();
@@ -14,54 +16,70 @@ const CartPage: React.FC = () => {
   const [isDeletingAddress, setIsDeletingAddress] = useState<string | null>(null);
   const navigate = useNavigate();
   
-  const addresses = userData?.address || [];
+  // Safely get addresses with strict type checking
+  const addresses: Address[] = userData?.address ?? [];
 
-  console.log("user data in cart page::", userData);
-  
-  const defaultAddress = userData?.address?.[0];
+  // Effect to handle automatic address selection
+  useEffect(() => {
+    // Check if we have addresses and no address is currently selected
+    if (Array.isArray(addresses) && addresses.length > 0) {
+      const firstAddress = addresses[0];
+      // Only set if we have a valid address and it has an _id
+      if (firstAddress && firstAddress._id) {
+        setSelectedAddressId(firstAddress._id);
+      }
+    } else {
+      // Reset selection if no addresses available
+      setSelectedAddressId('');
+    }
+  }, [addresses]); // Depend on addresses array changes
+
   const formatAddress = () => {
-    if (!defaultAddress) return 'Add delivery address';
+    // Strict null checks for first address
+    const firstAddress = Array.isArray(addresses) && addresses.length > 0 ? addresses[0] : null;
     
-    const parts = [];
-    if (defaultAddress.city) parts.push(defaultAddress.city);
-    if (defaultAddress.pinCode) parts.push(defaultAddress.pinCode);
+    if (!firstAddress) return 'Add delivery address';
+    
+    const parts: string[] = [];
+    if (firstAddress.city) parts.push(firstAddress.city);
+    if (firstAddress.pinCode) parts.push(firstAddress.pinCode);
     
     return parts.join(', ');
   };
-
-  // Reset selected address if it doesn't exist in addresses
-  useEffect(() => {
-    if (selectedAddressId && !addresses.some(addr => addr._id === selectedAddressId)) {
-      setSelectedAddressId('');
-    }
-  }, [addresses, selectedAddressId]);
 
   const handleAddAddress = () => {
     setShowAddressForm(true);
   };
 
   const handleAddressSelect = (addressId: string) => {
-    console.log('Selecting address:', addressId);
-    setSelectedAddressId(addressId);
+    if (addressId) {
+      setSelectedAddressId(addressId);
+    }
   };
 
   const handleDeleteAddress = async (addressId: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!addressId) return;
+    
     setIsDeletingAddress(addressId);
     
     try {
-      if (selectedAddressId === addressId) {
-        setSelectedAddressId('');
-      }
-      
-      const updatedAddresses = addresses.filter(addr => addr._id !== addressId);
-      
-      if (userData) {
+      // Only proceed if we have valid userData and addresses
+      if (userData && Array.isArray(addresses)) {
+        const updatedAddresses = addresses.filter(addr => addr._id !== addressId);
+        
         const updatedUserData = {
           ...userData,
           address: updatedAddresses
         };
+        
         updateUserData(updatedUserData);
+
+        // If we deleted the selected address, select the first available address
+        if (selectedAddressId === addressId) {
+          const newFirstAddress = updatedAddresses[0];
+          setSelectedAddressId(newFirstAddress ? newFirstAddress._id : '');
+        }
       }
     } catch (error) {
       console.error('Error deleting address:', error);
@@ -72,20 +90,21 @@ const CartPage: React.FC = () => {
 
   const handleCloseAddressForm = () => {
     setShowAddressForm(false);
-    if (!selectedAddressId && addresses.length > 0) {
-      setSelectedAddressId(addresses[0]._id);
+    
+    // After closing form, ensure first address is selected if available
+    if (Array.isArray(addresses) && addresses.length > 0) {
+      const firstAddress = addresses[0];
+      if (firstAddress && firstAddress._id) {
+        setSelectedAddressId(firstAddress._id);
+      }
     }
   };
   
-  console.log("selected address id::", selectedAddressId);
-  
   const handlePaymentClick = async () => {
     if (!selectedAddressId) {
-      console.error('No address selected');
+      toast.error('Please add a delivery address');
       return;
     }
-    console.log("selected address id::", selectedAddressId);
-    
     
     setIsLoading(true);
     try {
@@ -94,16 +113,17 @@ const CartPage: React.FC = () => {
       navigate('/checkout');
     } catch (error) {
       console.error('Payment navigation error:', error);
+      toast.error('Failed to proceed to payment');
     } finally {
       setIsLoading(false);
     }
   };
-  console.log("here is my address::", addresses);
-  
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-3 md:px-4 pb-24">
         <div className="max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
+          {/* Header Section */}
           <div className="flex items-center h-14 mb-2">
             <button 
               onClick={() => window.history.back()}
@@ -121,11 +141,14 @@ const CartPage: React.FC = () => {
               </div>
             </div>
           </div>
+
           <CartItems />
           <BillDetails />
         </div>
+
+        {/* Addresses Section */}
         <div className="mt-5 max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
-          {addresses.length > 0 ? (
+          {Array.isArray(addresses) && addresses.length > 0 ? (
             <div className="space-y-3">
               {addresses.map((address) => (
                 <div 
@@ -174,6 +197,7 @@ const CartPage: React.FC = () => {
             <AddressForm onClose={handleCloseAddressForm} />
           )}
 
+          {/* Action Buttons */}
           <div className="flex flex-col gap-3 mt-6">
             <button
               onClick={handleAddAddress}

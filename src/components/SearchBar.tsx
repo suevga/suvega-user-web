@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Product, SearchBarProps } from "../types/types";
 import { Search } from "lucide-react";
-import { Link } from "react-router";
+import { useNavigate } from "react-router";
 
 const SearchBar: React.FC<SearchBarProps> = ({
   className = '',
@@ -10,11 +10,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   setSearchQuery,
   isSearchActive,
   setIsSearchActive,
-  onProductClick,
   filteredProducts,
 }) => {
   const searchRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
+  console.log("Filtered Products from navbar: ", filteredProducts);
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -25,6 +27,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [setIsSearchActive]);
+
+  const handleProductClick = (productId: string) => {
+    try {
+      console.log("Product ID: ", productId);
+      setIsSearchActive(false);
+      setSearchQuery('');
+      navigate(`/product/${productId}`);
+    } catch (error) {
+      console.error("Error navigating to product:", error);
+    }
+  };
+
 
   return (
     <div className={`relative ${className}`} ref={searchRef}>
@@ -45,16 +59,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
           {filteredProducts.length > 0 ? (
             <div className="py-2">
               {filteredProducts.map((product: Product) => (
-                <Link
+                <button
                   key={product._id}
-                  to={`/product/${product._id}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (onProductClick) {
-                      onProductClick(product._id);
-                    }
+                  onClick={(e)=> {
+                    e.stopPropagation();
+                    console.log("button clicked", e);
+                    handleProductClick(product._id);
                   }}
-                  className="block w-full px-4 py-3 text-left cursor-pointer hover:bg-gray-50 items-center gap-3 border-b border-gray-100"
+                  className="block w-full bg-red-500 px-4 py-3 text-left cursor-pointer hover:bg-gray-50 items-center gap-3 border-b border-gray-100"
                 >
                   {product.productImages && product.productImages[0] && (
                     <img 
@@ -67,7 +79,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     <p className="text-sm font-medium text-gray-900">{product.productName}</p>
                     <p className="text-sm text-gray-500">₹{product.price}</p>
                   </div>
-                </Link>
+                </button>
               ))}
             </div>
           ) : (

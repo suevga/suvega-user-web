@@ -24,23 +24,42 @@ const CheckoutPage: React.FC = () => {
 
   const defaultAddress = userData?.address?.[0];
   const formatAddress = () => {
-    if (!defaultAddress) return 'Add delivery address';
+    const selectedAddressData = addresses.find(addr => addr._id === selectedAddress);
+    
+    if (!selectedAddressData) return 'Select delivery address';
     
     const parts = [];
-    if (defaultAddress.city) parts.push(defaultAddress.city);
-    if (defaultAddress.pinCode) parts.push(defaultAddress.pinCode);
+    if (selectedAddressData.city) parts.push(selectedAddressData.city);
+    if (selectedAddressData.pinCode) parts.push(selectedAddressData.pinCode);
     
     return parts.join(', ');
   };
 
+
   console.log("default address in my checkout page::", defaultAddress);
-  
+  // Get the addresses from userData safely
+  const addresses = userData?.address || [];
+
+  useEffect(() => {
+    // If we have addresses but no selection, select the first address
+    if (Array.isArray(addresses) && addresses.length > 0 && !selectedAddress) {
+      const firstAddress = addresses[0];
+      if (firstAddress?._id) {
+        setSelectedAddress(firstAddress._id);
+      }
+    }
+  }, [addresses, selectedAddress]);
+
   useEffect(() => {
     if (!userData) {
       toast.error('User not authenticated');
       navigate('/login');
     }
-  }, [userData, navigate]);
+    if (!Array.isArray(addresses) || addresses.length === 0) {
+      toast.error('Please add a delivery address');
+      navigate('/cart');
+    }
+  }, [userData, navigate, addresses]);
   
   const handleCreateOrder = async () => {
     if (!userData?._id) {
@@ -54,9 +73,15 @@ const CheckoutPage: React.FC = () => {
       setError('Cart is empty');
       return;
     }
+    if (!selectedAddress) {
+      toast.error('Please select a delivery address');
+      setError('Delivery address is required');
+      return;
+    }
 
     try {
       setIsLoading(true);
+      setError(null);
       const orderItems = items.map(item => ({
         productId: item._id,
         quantity: item.quantity,
@@ -78,9 +103,13 @@ const CheckoutPage: React.FC = () => {
         toast.done('Order placed successfully');
         useCartStore.getState().clearCart();
         navigate('/orders');
+      } else {
+        throw new Error('Failed to create order');
       }
     } catch (err) {
-      setError('Failed to create order');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -160,21 +189,36 @@ const CheckoutPage: React.FC = () => {
             <h3 className="text-sm font-semibold mb-4 flex items-center">
               <MapPin className="mr-2 text-primary" /> Delivery Address
             </h3>
-            {userData?.address?.map(addr => (
-              <div 
-                key={addr._id}
-                className={`border p-4 rounded-lg mb-4 cursor-pointer ${
-                  selectedAddress === addr._id 
-                    ? 'border-primary bg-blue-50' 
-                    : 'border-gray-200'
-                }`}
-                onClick={() => setSelectedAddress(addr._id)}
-              >
-                <p>{addr.fullName}</p>
-                <p>{addr.addressLine}</p>
-                <p>{addr.city}, {addr.pinCode}</p>
+            {addresses.length > 0 ? (
+              addresses.map(addr => (
+                <div 
+                  key={addr._id}
+                  className={`border p-4 rounded-lg mb-4 cursor-pointer transition-all ${
+                    selectedAddress === addr._id 
+                      ? 'border-primary bg-blue-50 ring-2 ring-primary ring-opacity-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  onClick={() => setSelectedAddress(addr._id)}
+                >
+                  <p className="font-medium">{addr.fullName}</p>
+                  <p className="text-sm text-gray-600">{addr.addressLine}</p>
+                  <p className="text-sm text-gray-600">{addr.city}, {addr.pinCode}</p>
+                  {addr.landmark && (
+                    <p className="text-sm text-gray-500 mt-1">Landmark: {addr.landmark}</p>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="text-center p-4 border border-dashed rounded-lg">
+                <p className="text-gray-500">No delivery addresses found</p>
+                <button
+                  onClick={() => navigate('/cart')}
+                  className="mt-2 text-primary hover:underline"
+                >
+                  Add New Address
+                </button>
               </div>
-            ))}
+            )}
           </div>
 
           {/* Payment Method */}

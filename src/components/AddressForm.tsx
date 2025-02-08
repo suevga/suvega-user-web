@@ -12,6 +12,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { phoneNumber, setUserData, userData } = useUserStore();
+  const [tempUserId, setTempUserId] = useState<string | null>(null);
   const { checkUserRegisteredOrNot, registerUser, updateUserDetails } = useApiStore();
   const { user } = useUser();
   const { latitude, longitude } = useLocationStore();
@@ -30,9 +31,11 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
   });
 
   const handleUpdateAddress = async (formData: AddressFormData) => {
-    if (!userData?._id) {
-      toast.error('User data is required for updating address');
-      throw new Error('User data is required for updating address');
+    const userId = userData?._id || tempUserId;
+
+    if (!userId) {
+      toast.error('User id is required for updating address');
+      throw new Error('User id is required for updating address');
     }
 
     const newAddress = {
@@ -40,8 +43,8 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
       ...formData
     };
 
-    const updatedUser = await updateUserDetails(userData._id, {
-      address: [...(userData.address || []), newAddress]
+    const updatedUser = await updateUserDetails(userId, {
+      address: [...(userData?.address || []), newAddress]
     });
   
     console.log("updated user after adding address::", updatedUser);
@@ -53,6 +56,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
     }
 
     setUserData(updatedUser);
+    return updatedUser;
   };
 
   const handleUserRegistration = async () => {
@@ -68,6 +72,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
 
     if (userCheck.isRegistered) {
       toast.success("User already registered");
+      setTempUserId(userCheck.user._id);
       setUserData(userCheck.user);
       return userCheck.user;
     }
@@ -88,10 +93,12 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
       throw new Error('Failed to register user');
     }
     toast.success("User registered successfully");
+    setTempUserId(registeredUser._id);
     setUserData(registeredUser);
     return registeredUser;
   };
-
+  console.log("temp user id::", tempUserId);
+  
   const onSubmit = async (formData: AddressFormData) => {
     setError(null);
     if (!phoneNumber) {
@@ -102,18 +109,12 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
 
     setLoading(true);
     try {
-      if (userData) {
-        // If user data exists, directly update address
+        await handleUserRegistration();
+
         await handleUpdateAddress(formData);
-      } else {
-        // If no user data, handle registration/login first
-        const user = await handleUserRegistration();
-        console.log("user retrive sucessfully::", user);
-        
-        // Then update address for the newly registered/retrieved user
-        await handleUpdateAddress(formData);
-      }
-      onClose();
+
+        toast.success("Address added successfully");
+        onClose();
     } catch (error) {
       console.error("Error in address submission:", error);
       setError(error instanceof Error ? error.message : "Failed to save address. Please try again.");

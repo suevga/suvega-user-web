@@ -17,7 +17,7 @@ const HomePage = () => {
   console.log("Categories in home page: ", categories);
   console.log("Products in home page: ", products);
   // Limit the number of categories to 4-5
-  const limitedCategories = categories.slice(0, 5);
+  const limitedCategories = categories.slice(0, 10);
 
   return (
     <div className="mx-auto px-2 py-8">

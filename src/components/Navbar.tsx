@@ -13,7 +13,7 @@ import useUserStore from '../store/useUserStore';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { userData } = useUserStore();
+  const { userData, resetUser, clearUserID } = useUserStore();
   const { isSignedIn } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -54,19 +54,21 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     await signOut();
+    resetUser();
+    clearUserID();
     navigate('/login');
   };
   
-  const handleProductClick = (productId: string) => {
-    try {
-      console.log('Attempting navigation to product:', productId);
-      setIsSearchActive(false);
-      setSearchQuery('');
-      navigate(`/product/${productId}`, { replace: true });
-    } catch (error) {
-      console.error('Navigation error:', error);
-    }
-  };
+  // const handleProductClick = (productId: string) => {
+  //   try {
+  //     console.log('Attempting navigation to product:', productId);
+  //     setIsSearchActive(false);
+  //     setSearchQuery('');
+  //     navigate(`/product/${productId}`, { replace: true });
+  //   } catch (error) {
+  //     console.error('Navigation error:', error);
+  //   }
+  // };
 
   const filteredProducts = searchQuery
     ? (products || []).filter((product: Product) =>
@@ -79,25 +81,21 @@ const Navbar = () => {
       {/* Desktop Navbar */}
       <div className="max-w-7xl mx-auto px-2">
         <div className="flex items-center justify-between h-16">
-          {/* Logo - Hidden on mobile */}
-          <Link to="/" className="hidden sm:flex items-center">
-            <ImageViewer
-              src={Images.logo}
-              alt="logo"
-              className="w-full h-10"
-            />
-          </Link>
+          {/* Logo - Visible on all screens */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center">
+              <ImageViewer
+                src={Images.logo}
+                alt="logo"
+                className="h-8 sm:h-10 w-auto"
+              />
+            </Link>
+          </div>
 
           {/* Mobile Header */}
-          <div className="flex sm:hidden items-center space-x-1 flex-1">
+          <div className="flex sm:hidden items-center ml-2 flex-shrink">
             <div className="flex flex-col items-start">
-              <span className="text-sm font-semibold">Delivery in 15 minutes</span>
-              <button 
-                onClick={handleAddressClick}
-                className="text-sm text-gray-600 truncate text-ellipsis max-w-[200px] hover:text-primary"
-              >
-                {formatAddress()}
-              </button>
+              <span className="text-xs font-semibold">Delivery in 15 minutes</span>
             </div>
           </div>
 
@@ -125,7 +123,7 @@ const Navbar = () => {
                 setSearchQuery={setSearchQuery}
                 isSearchActive={isSearchActive}
                 setIsSearchActive={setIsSearchActive}
-                onProductClick={handleProductClick}
+                // onProductClick={handleProductClick}
                 filteredProducts={filteredProducts}
               />
             </div>
@@ -212,7 +210,7 @@ const Navbar = () => {
             setSearchQuery={setSearchQuery}
             isSearchActive={isSearchActive}
             setIsSearchActive={setIsSearchActive}
-            onProductClick={handleProductClick}
+            // onProductClick={handleProductClick}
             filteredProducts={filteredProducts}
           />
         </div>

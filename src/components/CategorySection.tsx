@@ -23,7 +23,7 @@ const CategorySection = () => {
       </div>
       
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-        {categories && categories.slice(0, 6).map((category:Category) => (
+        {categories && categories.slice(0, 4).map((category:Category) => (
           <div key={category._id} className="w-full max-w-[200px] mx-auto h-full">
             <CategoryCard
               _id={category._id}
