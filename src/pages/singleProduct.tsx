@@ -36,11 +36,11 @@ const SingleProductPage = () => {
     p.productName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleProductClick = (productId: string) => {
-    setIsSearchActive(false);
-    setSearchQuery('');
-    window.location.href = `/product/${productId}`;
-  };
+  // const handleProductClick = (productId: string) => {
+  //   setIsSearchActive(false);
+  //   setSearchQuery('');
+  //   window.location.href = `/product/${productId}`;
+  // };
 
   if (!product) return <div>Product not found</div>;
 
@@ -93,7 +93,7 @@ const SingleProductPage = () => {
           setSearchQuery={setSearchQuery}
           isSearchActive={isSearchActive}
           setIsSearchActive={setIsSearchActive}
-          onProductClick={handleProductClick}
+          // onProductClick={handleProductClick}
           filteredProducts={filteredProducts}
         />
       </div>
