@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useUserStore from '../store/useUserStore';
 import { useApiStore } from '../hooks/useApiStore';
@@ -123,6 +123,9 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
     }
   };
 
+  useEffect(() => {
+    handleUserRegistration();
+  }, []);
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4 text-center">
