@@ -33,13 +33,15 @@ interface OrderStore {
   // State
   orders: Order[];
   selectedOrder: Order | null;
-  
+  isModalOpen: boolean;
+
   // Actions
   setOrders: (orders: Order[]) => void;
   addOrder: (order: Order) => void;
   updateOrder: (orderId: string, updates: Partial<Order>) => void;
   setSelectedOrder: (order: Order | null) => void;
-  
+  setModalOpen: (isOpen: boolean) => void;
+
   // Getters
   getOrderById: (orderId: string) => Order | undefined;
   getOrdersByStatus: (status: Order['orderStatus']) => Order[];
@@ -47,12 +49,8 @@ interface OrderStore {
   getActiveOrders: () => Order[];
   getCompletedOrders: () => Order[];
   getCancelledOrders: () => Order[];
-  
-  // UI State
-  isModalOpen: boolean;
-  setModalOpen: (isOpen: boolean) => void;
-  
-  // Order Operations
+
+  // Operations
   clearOrders: () => void;
   updateOrderStatus: (orderId: string, status: Order['orderStatus']) => void;
   updatePaymentStatus: (orderId: string, status: Order['paymentStatus']) => void;
@@ -69,58 +67,58 @@ const useOrderStore = create<OrderStore>()(
 
       // Setters
       setOrders: (orders) => set({ orders }),
-      
+
       addOrder: (order) => set((state) => ({
-        orders: [...state.orders, order]
+        orders: [...state.orders, order],
       })),
-      
+
       updateOrder: (orderId, updates) => set((state) => ({
         orders: state.orders.map((order) =>
           order._id === orderId ? { ...order, ...updates } : order
-        )
+        ),
       })),
-      
+
       setSelectedOrder: (order) => set({ selectedOrder: order }),
-      
+
       setModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
 
       // Getters
-      getOrderById: (orderId) => get().orders.find(order => order._id === orderId),
-      
-      getOrdersByStatus: (status) => 
-        get().orders.filter(order => order.orderStatus === status),
-      
-      getPendingOrders: () => 
-        get().orders.filter(order => order.orderStatus === "pending"),
-      
-      getActiveOrders: () => 
-        get().orders.filter(order => 
+      getOrderById: (orderId) => get().orders.find((order) => order._id === orderId),
+
+      getOrdersByStatus: (status) =>
+        get().orders.filter((order) => order.orderStatus === status),
+
+      getPendingOrders: () =>
+        get().orders.filter((order) => order.orderStatus === "pending"),
+
+      getActiveOrders: () =>
+        get().orders.filter((order) =>
           ["accepted", "pickup"].includes(order.orderStatus)
         ),
-      
-      getCompletedOrders: () => 
-        get().orders.filter(order => order.orderStatus === "delivered"),
-      
-      getCancelledOrders: () => 
-        get().orders.filter(order => 
+
+      getCompletedOrders: () =>
+        get().orders.filter((order) => order.orderStatus === "delivered"),
+
+      getCancelledOrders: () =>
+        get().orders.filter((order) =>
           ["cancelled", "rejected"].includes(order.orderStatus)
         ),
 
       // Operations
       clearOrders: () => set({ orders: [], selectedOrder: null }),
-      
+
       updateOrderStatus: (orderId, status) => set((state) => ({
         orders: state.orders.map((order) =>
           order._id === orderId ? { ...order, orderStatus: status } : order
-        )
+        ),
       })),
-      
+
       updatePaymentStatus: (orderId, status) => set((state) => ({
         orders: state.orders.map((order) =>
           order._id === orderId ? { ...order, paymentStatus: status } : order
-        )
+        ),
       })),
-      
+
       updateRiderLocation: (orderId, location) => set((state) => ({
         orders: state.orders.map((order) =>
           order._id === orderId && order.deliveryRider
@@ -128,11 +126,11 @@ const useOrderStore = create<OrderStore>()(
                 ...order,
                 deliveryRider: {
                   ...order.deliveryRider,
-                  location
-                }
+                  location,
+                },
               }
             : order
-        )
+        ),
       })),
     }),
     {

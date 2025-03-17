@@ -24,6 +24,7 @@ const OrderHistory = () => {
     updateOrderStatus,
     updateRiderLocation,
     getOrdersByStatus,
+    addOrder
   } = useOrderStore();
 
   useEffect(() => {
@@ -44,19 +45,39 @@ const OrderHistory = () => {
       }
     };
 
-    fetchOrders();
+    if (orders.length === 0) { // Fetch only if orders are empty
+      fetchOrders();
+    }
 
     // Initialize socket connection
     socketService.initialize(userData._id);
+    // Listen for new order updates
+    socketService.subscribeToOrderUpdates('newOrder', (update) => {
+      if (update.orderId) {
+        // Fetch the new order details from the backend
+        const fetchNewOrder = async () => {
+          try {
+            const response = await axiosInstance.get(`/api/v1/order/${update.orderId}`);
+            if (response.data.success) {
+              addOrder(response.data.data.order); // Add the new order to the store
+            }
+          } catch (error) {
+            console.error('Error fetching new order:', error);
+          }
+        };
+
+        fetchNewOrder();
+      }
+    });
 
     return () => {
       socketService.disconnect();
     };
-  }, [userData, navigate, setOrders]);
+  }, [userData, navigate, setOrders, addOrder]);
 
   useEffect(() => {
     if (selectedOrder) {
-      socketService.subscribeToOrderUpdates(selectedOrder._id, (update) => {
+      const handleOrderUpdate = (update: any) => {
         if (update.status === "ORDER_ACCEPTED") {
           updateOrderStatus(selectedOrder._id, "accepted");
         } else if (update.status === "ORDER_REJECTED") {
@@ -66,20 +87,20 @@ const OrderHistory = () => {
         } else if (update.status === "DELIVERED") {
           updateOrderStatus(selectedOrder._id, "delivered");
         }
-        
+
         if (update.rider?.location) {
           updateRiderLocation(selectedOrder._id, {
             coordinates: [update.rider.location.lat, update.rider.location.lng]
           });
         }
-      });
-    }
+      };
 
-    return () => {
-      if (selectedOrder) {
+      socketService.subscribeToOrderUpdates(selectedOrder._id, handleOrderUpdate);
+
+      return () => {
         socketService.unsubscribeFromOrderUpdates(selectedOrder._id);
-      }
-    };
+      };
+    }
   }, [selectedOrder, updateOrderStatus, updateRiderLocation]);
 
   const getStatusBadgeClass = (status: OrderStatus) => {
@@ -109,8 +130,7 @@ const OrderHistory = () => {
   const getProductDetails = (productId: string) => {
     return products.find(product => product._id === productId);
   };
-  
-  
+
   const handleOrderClick = (order: typeof orders[0]) => {
     setSelectedOrder(order);
     setModalOpen(true);
@@ -171,36 +191,36 @@ const OrderHistory = () => {
   const defaultAddress = userData?.address?.[0];
   const formatAddress = () => {
     if (!defaultAddress) return 'Add delivery address';
-    
+
     const parts = [];
     if (defaultAddress.city) parts.push(defaultAddress.city);
     if (defaultAddress.pinCode) parts.push(defaultAddress.pinCode);
-    
+
     return parts.join(', ');
   };
 
   return (
     <div className="container mx-auto px-4 py-2">
-        <div className="flex items-center h-14 mb-2 shadow">
-          <button 
-            onClick={() => window.history.back()}
-            className="mr-3"
-          >
-            <ArrowLeft className="w-6 h-6 text-gray-700" />
-          </button>
-          <div className="flex-1">
-            <div className="flex flex-col">
-              <h1 className="text-sm font-medium">Delivery in 15 minutes</h1>
-              <p className="text-xs text-gray-500">
-                {formatAddress()}
-              </p>
-            </div>
+      <div className="flex items-center h-14 mb-2 shadow">
+        <button
+          onClick={() => window.history.back()}
+          className="mr-3"
+        >
+          <ArrowLeft className="w-6 h-6 text-gray-700" />
+        </button>
+        <div className="flex-1">
+          <div className="flex flex-col">
+            <h1 className="text-sm font-medium">Delivery in 15 minutes</h1>
+            <p className="text-xs text-gray-500">
+              {formatAddress()}
+            </p>
           </div>
         </div>
+      </div>
       <h1 className="text-lg font-bold mb-6">My Orders</h1>
 
       <div className="space-y-8">
-      <OrderSection title="Pending Orders" orders={getOrdersByStatus('pending').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
+        <OrderSection title="Pending Orders" orders={getOrdersByStatus('pending').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
         <OrderSection title="Accepted Orders" orders={getOrdersByStatus('accepted').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
         <OrderSection title="Orders Out for Delivery" orders={getOrdersByStatus('pickup').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
         <OrderSection title="Delivered Orders" orders={getOrdersByStatus('delivered').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
@@ -208,7 +228,6 @@ const OrderHistory = () => {
         <OrderSection title="Rejected Orders" orders={getOrdersByStatus('rejected').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())} />
       </div>
 
-      {/* Order Details Modal */}
       {selectedOrder && isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-lg w-full relative max-h-[90vh] overflow-y-auto">
@@ -218,22 +237,22 @@ const OrderHistory = () => {
             >
               <X className="w-6 h-6" />
             </button>
-            
+
             <h2 className="text-xl font-bold mb-4">Order Details</h2>
-            
+
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-gray-500">Order ID</p>
                 <p className="font-medium">{selectedOrder._id}</p>
               </div>
-              
+
               <div>
                 <p className="text-sm text-gray-500">Status</p>
                 <span className={getStatusBadgeClass(selectedOrder.orderStatus)}>
                   {getStatusLabel(selectedOrder.orderStatus)}
                 </span>
               </div>
-              
+
               <div>
                 <p className="text-sm text-gray-500">Items</p>
                 <div className="space-y-2 mt-2">
@@ -250,7 +269,7 @@ const OrderHistory = () => {
                   })}
                 </div>
               </div>
-              
+
               <div>
                 <p className="text-sm text-gray-500">Payment Details</p>
                 <div className="mt-1">

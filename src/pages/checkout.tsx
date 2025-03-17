@@ -5,6 +5,7 @@ import useUserStore from '../store/useUserStore';
 import { useApiStore } from '../hooks/useApiStore';
 import { AlertCircle, CreditCard, Truck, MapPin, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify'; 
+import useOrderStore from '../store/useOrderStore';
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -102,6 +103,10 @@ const CheckoutPage: React.FC = () => {
       if (orderResponse && orderResponse.userId) {
         toast.done('Order placed successfully');
         useCartStore.getState().clearCart();
+        // Add the new order to the order store
+        const { addOrder } = useOrderStore.getState();
+        addOrder(orderResponse);
+
         navigate('/orders');
       } else {
         throw new Error('Failed to create order');
@@ -260,7 +265,7 @@ const CheckoutPage: React.FC = () => {
           {/* Order Button */}
           <button
             onClick={handleCreateOrder}
-            className={`w-full mt-6 py-2 text-sm rounded-lg transition-colors flex items-center justify-center ${
+            className={`w-full mt-6 py-2 text-sm rounded-lg transition-colors flex items-center justify-center cursor-pointer ${
               isPlaceOrderDisabled
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-primary text-white hover:bg-secondary'
