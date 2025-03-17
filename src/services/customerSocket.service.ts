@@ -26,6 +26,9 @@ class SocketService {
     return new Promise((resolve, reject) => {
       try {
         this.userId = userId;
+        console.log(`Initializing socket for userId: ${this.userId}`); // Use userId for debugging
+        console.log('Connecting to socket server:', envConfig.apiUrl); // Debug log
+        
         this.socket = io(envConfig.apiUrl, {
           query: { userId },
           reconnection: true, // Enable reconnection
