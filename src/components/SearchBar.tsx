@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Product, SearchBarProps } from "../types/types";
 import { Search } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const SearchBar: React.FC<SearchBarProps> = ({
   className = '',
@@ -14,8 +14,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  console.log("Filtered Products from navbar: ", filteredProducts);
   
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -29,16 +27,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
   }, [setIsSearchActive]);
 
   const handleProductClick = (productId: string) => {
-    try {
-      console.log("Product ID: ", productId);
-      setIsSearchActive(false);
-      setSearchQuery('');
-      navigate(`/product/${productId}`);
-    } catch (error) {
-      console.error("Error navigating to product:", error);
-    }
+    // First reset search state
+    setIsSearchActive(false);
+    setSearchQuery('');
+    
+    // Use setTimeout to ensure state updates complete before navigation
+    setTimeout(() => {
+      console.log("Navigating to product:", productId);
+      navigate(`/product/${productId}`, { replace: false });
+    }, 0);
   };
-
 
   return (
     <div className={`relative ${className}`} ref={searchRef}>
@@ -59,27 +57,26 @@ const SearchBar: React.FC<SearchBarProps> = ({
           {filteredProducts.length > 0 ? (
             <div className="py-2">
               {filteredProducts.map((product: Product) => (
-                <button
+                <div
                   key={product._id}
-                  onClick={(e)=> {
-                    e.stopPropagation();
-                    console.log("button clicked", e);
+                  className="flex items-center w-full px-4 py-3 text-left cursor-pointer hover:bg-gray-50 border-b border-gray-100"
+                  onClick={() => {
+                    console.log("Product clicked:", product._id);
                     handleProductClick(product._id);
                   }}
-                  className="block w-full bg-red-500 px-4 py-3 text-left cursor-pointer hover:bg-gray-50 items-center gap-3 border-b border-gray-100"
                 >
                   {product.productImages && product.productImages[0] && (
                     <img 
                       src={product.productImages[0].imageUrl} 
                       alt={product.productName}
-                      className="w-10 h-10 object-cover rounded"
+                      className="w-10 h-10 object-cover rounded mr-3"
                     />
                   )}
                   <div>
                     <p className="text-sm font-medium text-gray-900">{product.productName}</p>
                     <p className="text-sm text-gray-500">₹{product.price}</p>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           ) : (

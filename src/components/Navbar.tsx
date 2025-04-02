@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ShoppingCart, MapPin, Menu, X, User } from 'lucide-react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import ImageViewer from './ImageViewer';
 import { Images } from '../constants/images';
@@ -101,7 +101,7 @@ const Navbar = () => {
 
           {/* Location (Desktop) */}
           <div className="hidden sm:flex flex-col items-start gap-1 text-sm">
-            <span className="font-bold text-primary-text">Delivery in 15 minutes</span>
+            <span className="font-extrabold text-primary-text">Delivery in 15 minutes</span>
             <div className="flex items-center text-gray-700">
               <MapPin className="w-4 h-4" color="#FF0A81"/>
               <button 
@@ -157,6 +157,24 @@ const Navbar = () => {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     my orders
+                  </Link>
+                  <Link
+                    to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    about us
+                  </Link>
+                  <Link
+                    to={'https://docs.google.com/document/d/e/2PACX-1vTHQG99Ur0oFmGIfzeMo48MY2DL2mB2aN5O59jT-Yg4pthe7RvQKbfaqIGSs9Ge6abmtNA1j395PJXo/pub'}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    privacy-policy
+                  </Link>
+                  <Link
+                    to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    contact-us
                   </Link>
                   <CustomButton
                     onClick={handleSignOut}
@@ -241,6 +259,24 @@ const Navbar = () => {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     my orders
+                  </Link>
+                  <Link
+                    to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    about us
+                  </Link>
+                  <Link
+                    to={'https://docs.google.com/document/d/e/2PACX-1vTHQG99Ur0oFmGIfzeMo48MY2DL2mB2aN5O59jT-Yg4pthe7RvQKbfaqIGSs9Ge6abmtNA1j395PJXo/pub'}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    privacy-policy
+                  </Link>
+                  <Link
+                    to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    contact-us
                   </Link>
                   <CustomButton 
                     onClick={handleSignOut}

@@ -30,6 +30,8 @@ import CheckoutPage from './pages/checkout';
 import useUserStore from './store/useUserStore';
 import OnboardPage from './pages/onboard';
 import ServiceAreaPopup from './components/ServiceAreaPopUp';
+import { HelmetProvider } from 'react-helmet-async';
+
 
 const publishableKey = envConfig.clerkPulishableKey;
 
@@ -119,8 +121,9 @@ function App() {
   };
 
   return (
-    <ClerkProvider publishableKey={publishableKey}>
-      <Router>
+    <HelmetProvider>
+      <ClerkProvider publishableKey={publishableKey}>
+        <Router>
         {error ? (
           <LocationError
           message={error}
@@ -220,8 +223,9 @@ function App() {
             </Routes>
           </div>
         )}
-      </Router>
-    </ClerkProvider>
+        </Router>
+      </ClerkProvider>
+    </HelmetProvider>
   )
 }
 

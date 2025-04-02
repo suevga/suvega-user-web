@@ -1,6 +1,6 @@
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useProductStore from '../store/useProductStore';
 import useCartStore from '../store/useCartStore';
 import SearchBar from '../components/SearchBar';
@@ -10,12 +10,24 @@ import useUserStore from '../store/useUserStore';
 
 const SingleProductPage = () => {
   const { productId } = useParams();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { userData } = useUserStore();
   const { products, getProductById } = useProductStore();
   const { items, addToCart, updateQuantity } = useCartStore();
+  
+  // Add useEffect to log when component mounts with productId
+  useEffect(() => {
+    console.log("SingleProductPage mounted with productId:", productId);
+    
+    // Verify the product exists
+    const product = getProductById(productId || '');
+    if (!product && productId) {
+      console.log("Product not found in store, id:", productId);
+    }
+  }, [productId, getProductById]);
   
   const product = getProductById(productId || '');
   const cartItem = items.find(item => item._id === productId);
@@ -36,13 +48,16 @@ const SingleProductPage = () => {
     p.productName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // const handleProductClick = (productId: string) => {
-  //   setIsSearchActive(false);
-  //   setSearchQuery('');
-  //   window.location.href = `/product/${productId}`;
-  // };
-
-  if (!product) return <div>Product not found</div>;
+  if (!product) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h2 className="text-xl font-bold mb-4">Product not found</h2>
+        <CustomButton onClick={() => navigate('/')} className="text-white py-2 px-4 rounded-lg">
+          Return to Home
+        </CustomButton>
+      </div>
+    );
+  }
 
   const handleAddToCart = () => {
     addToCart({
@@ -68,7 +83,7 @@ const SingleProductPage = () => {
       <div className="fixed top-0 left-0 right-0 bg-white p-4 z-10">
         <div className="flex items-center h-14 mb-2">
           <button 
-            onClick={() => window.history.back()}
+            onClick={() => navigate(-1)}
             className="mr-3"
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
@@ -93,7 +108,6 @@ const SingleProductPage = () => {
           setSearchQuery={setSearchQuery}
           isSearchActive={isSearchActive}
           setIsSearchActive={setIsSearchActive}
-          // onProductClick={handleProductClick}
           filteredProducts={filteredProducts}
         />
       </div>

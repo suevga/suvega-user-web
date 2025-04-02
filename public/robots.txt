@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://suveganow.netlify.app/sitemap.xml
