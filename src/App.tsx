@@ -31,6 +31,8 @@ import useUserStore from './store/useUserStore';
 import OnboardPage from './pages/onboard';
 import ServiceAreaPopup from './components/ServiceAreaPopUp';
 import { HelmetProvider } from 'react-helmet-async';
+import Footer from './components/Footer';
+import Navbar from './components/Navbar';
 
 
 const publishableKey = envConfig.clerkPulishableKey;
@@ -131,96 +133,105 @@ function App() {
           onOpenSettings={handleOpenSettings}
           />
         ) : (
-          <div className="relative min-h-screen">
+          <div className="relative min-h-screen flex flex-col">
             <ServiceAreaPopup/>
-            <Routes>
-              <Route 
-                path="/onboard" 
-                element={
+            {/* Global Navbar for large screens only */}
+            <div className="hidden sm:block">
+              <Navbar />
+            </div>
+            <div className="flex-grow">
+              <Routes>
+                <Route 
+                  path="/onboard" 
+                  element={
+                    <ProtectedRoute>
+                      <OnboardPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="/" element={
                   <ProtectedRoute>
-                    <OnboardPage />
+                    <HomePageWithCart />
                   </ProtectedRoute>
-                } 
-              />
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <HomePageWithCart />
-                </ProtectedRoute>
-              } />
+                } />
 
-              <Route path="/login" element={
-                <PublicRoute>
-                  <LoginPage />
-                </PublicRoute>
-              } />
+                <Route path="/login" element={
+                  <PublicRoute>
+                    <LoginPage />
+                  </PublicRoute>
+                } />
 
-              <Route 
-                path="/categories" 
-                element={
+                <Route 
+                  path="/categories" 
+                  element={
+                    <ProtectedRoute>
+                      <CategoryPageWithCart />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/categories/:categoryId" 
+                  element={
+                    <ProtectedRoute>
+                      <CategoryPageWithCart />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/cart" 
+                  element={
+                    <ProtectedRoute>
+                      <CartPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/profile" 
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePageWithCart />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/address" 
+                  element={
+                    <ProtectedRoute>
+                      <AddressPageWithCart />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/orders" 
+                  element={
+                    <ProtectedRoute>
+                      <OrderHistoryPageWithCart />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/checkout" 
+                  element={
+                    <ProtectedRoute>
+                      <CheckoutPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="/product/:productId" element={
                   <ProtectedRoute>
-                    <CategoryPageWithCart />
+                    <SingleProductPageWithCart />
                   </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/categories/:categoryId" 
-                element={
-                  <ProtectedRoute>
-                    <CategoryPageWithCart />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/cart" 
-                element={
-                  <ProtectedRoute>
-                    <CartPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/profile" 
-                element={
-                  <ProtectedRoute>
-                    <ProfilePageWithCart />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/address" 
-                element={
-                  <ProtectedRoute>
-                    <AddressPageWithCart />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/orders" 
-                element={
-                  <ProtectedRoute>
-                    <OrderHistoryPageWithCart />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/checkout" 
-                element={
-                  <ProtectedRoute>
-                    <CheckoutPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="/product/:productId" element={
-                <ProtectedRoute>
-                  <SingleProductPageWithCart />
-                </ProtectedRoute>
-              } />
-              <Route path="*" element={
-                <SignedIn>
-                  <Navigate to="/" replace />
-                </SignedIn>
-              } />
-            </Routes>
+                } />
+                <Route path="*" element={
+                  <SignedIn>
+                    <Navigate to="/" replace />
+                  </SignedIn>
+                } />
+              </Routes>
+            </div>
+            <SignedIn>
+              <Footer />
+            </SignedIn>
           </div>
         )}
         </Router>

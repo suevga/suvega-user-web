@@ -53,7 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
     : 0;
 
   return (
-    <Link to={`/product/${_id}`} className="block w-full">
+    <Link to={`/product/${_id}`} className="block w-full max-w-xs mx-auto">
       <div className="relative bg-white rounded-lg sm:rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] h-full">
         {/* Discount Badge */}
         {discountPrice && discountPercentage > 0 && (
@@ -63,7 +63,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
         )}
         
         {/* Image Container */}
-        <div className="aspect-square w-full bg-gray-50">
+        <div className="aspect-square w-full bg-gray-50 max-h-[180px] sm:max-h-[200px] lg:max-h-[160px]">
           <ImageViewer
             src={convertToSecureUrl(productImages[0].imageUrl)}
             className="w-full h-full object-contain transition-transform duration-300 hover:scale-110"
@@ -72,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
         </div>
 
         {/* Content Container */}
-        <div className="p-2 sm:p-3 md:p-4 space-y-2 sm:space-y-3">
+        <div className="p-2 sm:p-3 space-y-1 sm:space-y-2">
           {/* Product Name */}
           <h2 className="text-sm sm:text-base font-medium text-gray-800 line-clamp-2 min-h-[2.5em]">
             {productName}
@@ -82,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
           <div className="flex items-center justify-between">
             {discountPrice ? (
               <>
-                <span className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
+                <span className="text-sm sm:text-base font-bold text-gray-900">
                   ₹{discountPrice.toLocaleString()}
                 </span>
                 <span className="text-xs sm:text-sm text-gray-500 line-through">
@@ -90,37 +90,37 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
                 </span>
               </>
             ) : (
-              <span className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
+              <span className="text-sm sm:text-base font-bold text-gray-900">
                 ₹{price.toLocaleString()}
               </span>
             )}
           </div>
 
           {/* Add to Cart Button */}
-          <div className="pt-2">
+          <div className="pt-1 sm:pt-2">
             {quantity === 0 ? (
               <CustomButton 
                 onClick={handleAddToCart}
-                className="w-full h-8 sm:h-10 text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 hover:opacity-90"
+                className="w-full h-8 text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 hover:opacity-90"
               >
                 Add
               </CustomButton>
             ) : (
-              <div className="flex items-stretch h-8 sm:h-10 bg-secondaryBtnColor rounded-lg overflow-hidden">
+              <div className="flex items-stretch h-8 bg-secondaryBtnColor rounded-lg overflow-hidden">
                 <CustomButton 
                   onClick={handleDecreaseQuantity} 
-                  className="flex-1 font-bold flex items-center justify-center text-sm sm:text-base"
+                  className="flex-1 font-bold flex items-center justify-center text-sm"
                 >
                   −
                 </CustomButton>
                 <div className="flex-1 flex items-center justify-center">
-                  <span className="text-primary-text text-sm sm:text-base font-bold">
+                  <span className="text-primary-text text-sm font-bold">
                     {quantity}
                   </span>
                 </div>
                 <CustomButton 
                   onClick={handleIncreaseQuantity}
-                  className="flex-1 font-bold flex items-center justify-center text-sm sm:text-base"
+                  className="flex-1 font-bold flex items-center justify-center text-sm"
                 >
                   +
                 </CustomButton>

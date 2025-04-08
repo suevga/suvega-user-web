@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Product, SearchBarProps } from "../types/types";
 import { Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const SearchBar: React.FC<SearchBarProps> = ({
   className = '',
@@ -11,6 +11,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   isSearchActive,
   setIsSearchActive,
   filteredProducts,
+  onProductClick,
 }) => {
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -27,15 +28,29 @@ const SearchBar: React.FC<SearchBarProps> = ({
   }, [setIsSearchActive]);
 
   const handleProductClick = (productId: string) => {
+    console.log("SearchBar: Clicked on product with ID:", productId);
+    
     // First reset search state
     setIsSearchActive(false);
     setSearchQuery('');
     
-    // Use setTimeout to ensure state updates complete before navigation
-    setTimeout(() => {
-      console.log("Navigating to product:", productId);
-      navigate(`/product/${productId}`, { replace: false });
-    }, 0);
+    if (onProductClick) {
+      // Use the parent's onProductClick function if provided
+      console.log("SearchBar: Using parent onProductClick function");
+      onProductClick(productId);
+    } else {
+      // If no parent handler, navigate directly with a delay to ensure state updates
+      console.log("SearchBar: Using direct navigation");
+      // Use a small timeout to ensure the state is updated before navigation
+      setTimeout(() => {
+        try {
+          console.log("SearchBar: Navigating to:", `/product/${productId}`);
+          navigate(`/product/${productId}`);
+        } catch (error) {
+          console.error("SearchBar: Navigation error:", error);
+        }
+      }, 50);
+    }
   };
 
   return (
@@ -60,8 +75,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 <div
                   key={product._id}
                   className="flex items-center w-full px-4 py-3 text-left cursor-pointer hover:bg-gray-50 border-b border-gray-100"
-                  onClick={() => {
-                    console.log("Product clicked:", product._id);
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("Clicked product in search results:", product._id);
                     handleProductClick(product._id);
                   }}
                 >

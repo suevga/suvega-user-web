@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { ShoppingCart, MapPin, Menu, X, User } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { ShoppingCart, MapPin, Menu, X, User, Search } from 'lucide-react';
+import { Link, useNavigate } from 'react-router';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import ImageViewer from './ImageViewer';
 import { Images } from '../constants/images';
@@ -8,19 +8,210 @@ import CustomButton from './CustomButton';
 import useCartStore from '../store/useCartStore';
 import useProductStore from '../store/useProductStore';
 import { Product } from '../types/types';
-import SearchBar from './SearchBar';
 import useUserStore from '../store/useUserStore';
+
+// NavbarSearch component specifically for the navbar
+const NavbarSearch = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const { products } = useProductStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchActive(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const filteredProducts = searchQuery
+    ? (products || []).filter((product: Product) =>
+        product.productName.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
+  const handleProductClick = (productId: string) => {
+    // Reset search state
+    setIsSearchActive(false);
+    setSearchQuery('');
+    
+    // Use window.location.href for reliable navigation with page refresh
+    // window.location.href = `/product/${productId}`;
+    navigate(`/product/${productId}`);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
+  return (
+    <div className="relative w-full" ref={searchRef}>
+      <div className="relative w-full">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <input
+          type="text"
+          placeholder="Search product here"
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onFocus={() => setIsSearchActive(true)}
+        />
+        {searchQuery.length > 0 && (
+          <button
+            onClick={handleClearSearch}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer hover:text-gray-600"
+          >
+            <X className="w-4 h-4" color="#FF0A81" />
+          </button>
+        )}
+      </div>
+
+      {isSearchActive && searchQuery && (
+        <div className="absolute w-full bg-white rounded-lg shadow-lg mt-1 max-h-96 overflow-y-auto z-50 top-12">
+          {filteredProducts.length > 0 ? (
+            <div className="py-2">
+              {filteredProducts.map((product: Product) => (
+                <div
+                  key={product._id}
+                  className="flex items-center w-full px-4 py-3 text-left cursor-pointer hover:bg-gray-50 border-b border-gray-100"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleProductClick(product._id);
+                  }}
+                >
+                  {product.productImages && product.productImages[0] && (
+                    <img 
+                      src={product.productImages[0].imageUrl} 
+                      alt={product.productName}
+                      className="w-10 h-10 object-cover rounded mr-3"
+                    />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{product.productName}</p>
+                    <p className="text-sm text-gray-500">₹{product.price}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 text-center text-gray-500">No products found</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Mobile-optimized search component
+const MobileNavbarSearch = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const { products } = useProductStore();
+  const navigate = useNavigate();
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchActive(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const filteredProducts = searchQuery
+    ? (products || []).filter((product: Product) =>
+        product.productName.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
+  const handleProductClick = (productId: string) => {
+    // Reset search state
+    setIsSearchActive(false);
+    setSearchQuery('');
+    
+    // Use window.location.href for reliable navigation with page refresh
+    // window.location.href = `/product/${productId}`;
+    navigate(`/product/${productId}`);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
+  return (
+    <div className="relative w-full" ref={searchRef}>
+      <div className="relative w-full">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <input
+          type="text"
+          placeholder="Search product here"
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onFocus={() => setIsSearchActive(true)}
+        />
+        {searchQuery.length > 0 && (
+          <button
+            onClick={handleClearSearch}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer hover:text-gray-600"
+          >
+            <X className="w-4 h-4" color="#FF0A81" />
+          </button>
+        )}
+      </div>
+
+      {isSearchActive && searchQuery && (
+        <div className="absolute w-full bg-white rounded-lg shadow-lg mt-1 max-h-96 overflow-y-auto z-50 top-full">
+          {filteredProducts.length > 0 ? (
+            <div className="py-2">
+              {filteredProducts.map((product: Product) => (
+                <div
+                  key={product._id}
+                  className="flex items-center w-full px-4 py-3 text-left cursor-pointer hover:bg-gray-50 border-b border-gray-100"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleProductClick(product._id);
+                  }}
+                >
+                  {product.productImages && product.productImages[0] && (
+                    <img 
+                      src={product.productImages[0].imageUrl} 
+                      alt={product.productName}
+                      className="w-10 h-10 object-cover rounded mr-3"
+                    />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{product.productName}</p>
+                    <p className="text-sm text-gray-500">₹{product.price}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 text-center text-gray-500">No products found</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { userData, resetUser, clearUserID } = useUserStore();
   const { isSignedIn } = useUser();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchActive, setIsSearchActive] = useState(false);
   const { signOut } = useClerk();
   const navigate = useNavigate();
   const { items }= useCartStore();
-  const { products } = useProductStore();
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -59,23 +250,6 @@ const Navbar = () => {
     navigate('/login');
   };
   
-  // const handleProductClick = (productId: string) => {
-  //   try {
-  //     console.log('Attempting navigation to product:', productId);
-  //     setIsSearchActive(false);
-  //     setSearchQuery('');
-  //     navigate(`/product/${productId}`, { replace: true });
-  //   } catch (error) {
-  //     console.error('Navigation error:', error);
-  //   }
-  // };
-
-  const filteredProducts = searchQuery
-    ? (products || []).filter((product: Product) =>
-        product.productName.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
- 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white shadow z-50 rounded">
       {/* Desktop Navbar */}
@@ -113,20 +287,9 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Search Bar */}
+          {/* Search Bar - Using the NavbarSearch component */}
           <div className="hidden sm:flex flex-1 max-w-xl mx-4">
-            <div className="relative w-full">
-              <SearchBar
-                className=""
-                isMobile={false}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                isSearchActive={isSearchActive}
-                setIsSearchActive={setIsSearchActive}
-                // onProductClick={handleProductClick}
-                filteredProducts={filteredProducts}
-              />
-            </div>
+            <NavbarSearch />
           </div>
 
           {/* Login & Cart (Desktop) */}
@@ -221,16 +384,7 @@ const Navbar = () => {
       {/* Mobile Search Bar */}
       <div className="sm:hidden px-1 py-2 border-t">
         <div className="relative">
-          <SearchBar
-            className=""
-            isMobile={true}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            isSearchActive={isSearchActive}
-            setIsSearchActive={setIsSearchActive}
-            // onProductClick={handleProductClick}
-            filteredProducts={filteredProducts}
-          />
+          <MobileNavbarSearch />
         </div>
       </div>
 

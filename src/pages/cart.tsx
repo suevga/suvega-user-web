@@ -7,17 +7,31 @@ import { useNavigate } from 'react-router';
 import { AddressForm } from '../components/AddressForm';
 import { Address } from '../types/types'; // Make sure to import Address type
 import { toast } from 'react-toastify';
+import SearchBar from '../components/SearchBar';
+import useProductStore from '../store/useProductStore';
 
 const CartPage: React.FC = () => {
   const { userData, updateUserData } = useUserStore();
+  const { products } = useProductStore();
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDeletingAddress, setIsDeletingAddress] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
   
   // Safely get addresses with strict type checking
   const addresses: Address[] = userData?.address ?? [];
+
+  // Filter products for search
+  const filteredProducts = products.filter(p => 
+    p.productName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/product/${productId}`);
+  };
 
   // Effect to handle automatic address selection
   useEffect(() => {
@@ -121,10 +135,10 @@ const CartPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-3 md:px-4 pb-24">
+      <div className="container mx-auto px-3 md:px-4 pb-28">
         <div className="max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
           {/* Header Section */}
-          <div className="flex items-center h-14 mb-2">
+          <div className="flex items-center h-14 mb-2 lg:hidden">
             <button 
               onClick={() => window.history.back()}
               className="mr-3"
@@ -140,6 +154,20 @@ const CartPage: React.FC = () => {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Search Bar - Only visible on mobile */}
+          <div className="lg:hidden mb-4">
+            <SearchBar
+              className="w-full"
+              isMobile={true}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              isSearchActive={isSearchActive}
+              setIsSearchActive={setIsSearchActive}
+              filteredProducts={filteredProducts}
+              onProductClick={handleProductClick}
+            />
           </div>
 
           <CartItems />
@@ -198,33 +226,35 @@ const CartPage: React.FC = () => {
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-col gap-3 mt-6">
-            <button
-              onClick={handleAddAddress}
-              className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-primary-text font-medium 
-                       hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 cursor-pointer"
-            >
-              + Add New Address
-            </button>
-            
-            <button
-              onClick={handlePaymentClick}
-              disabled={!selectedAddressId || isLoading}
-              className={`w-full py-2.5 px-4 rounded-lg font-medium text-white 
-                        ${selectedAddressId && !isLoading
-                          ? 'bg-primary hover:bg-primary/90' 
-                          : 'bg-gray-400 cursor-not-allowed'} 
-                        transition-colors flex items-center justify-center gap-2 cursor-pointer`}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                'Proceed to Payment'
-              )}
-            </button>
+          <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 z-10">
+            <div className="max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto flex flex-col gap-3">
+              <button
+                onClick={handleAddAddress}
+                className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-primary-text font-medium 
+                         hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              >
+                + Add New Address
+              </button>
+              
+              <button
+                onClick={handlePaymentClick}
+                disabled={!selectedAddressId || isLoading}
+                className={`w-full py-2.5 px-4 rounded-lg font-medium text-white 
+                          ${selectedAddressId && !isLoading
+                            ? 'bg-primary hover:bg-primary/90' 
+                            : 'bg-gray-400 cursor-not-allowed'} 
+                          transition-colors flex items-center justify-center gap-2 cursor-pointer`}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  'Proceed to Payment'
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,9 +1,26 @@
 import { ArrowLeft, MapPin, Phone, User } from 'lucide-react';
 import useUserStore from '../store/useUserStore';
 import { Address } from '../types/types';
+import SearchBar from '../components/SearchBar';
+import useProductStore from '../store/useProductStore';
+import { useNavigate } from 'react-router';
+import { useState } from 'react';
 
 const ProfilePage = () => {
   const { userData } = useUserStore();
+  const { products } = useProductStore();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchActive, setIsSearchActive] = useState(false);
+
+  // Filter products for search
+  const filteredProducts = products.filter(p => 
+    p.productName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/product/${productId}`);
+  };
 
   const formatAddress = (address: Address) => {
     const parts = [];
@@ -24,27 +41,38 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16">
-            <button 
-              onClick={() => window.history.back()}
-              className="mr-3 hover:bg-gray-100 p-2 rounded-full transition-colors"
-              aria-label="Go back"
-            >
-              <ArrowLeft className="w-6 h-6 text-gray-700" />
-            </button>
-            <div>
+      <div className="fixed top-0 left-0 right-0 bg-white p-4 z-10 sm:hidden">
+        <div className="flex items-center h-14 mb-2">
+          <button 
+            onClick={() => navigate(-1)}
+            className="mr-3"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          
+          {/* Location Info */}
+          <div className="flex-1">
+            <div className="flex flex-col">
               <h1 className="text-sm font-medium">Delivery in 15 minutes</h1>
               <p className="text-xs text-gray-500">
-                {userData.address?.map(address => address.city)}
-                {"\n"},
-                {userData.address?.map(address => address.addressLine)}
+                {formatAddress(userData?.address?.[0])}
               </p>
             </div>
           </div>
         </div>
-      </header>
+
+        {/* Search Bar - Only visible on mobile */}
+        <SearchBar
+          className="w-full"
+          isMobile={true}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          isSearchActive={isSearchActive}
+          setIsSearchActive={setIsSearchActive}
+          filteredProducts={filteredProducts}
+          onProductClick={handleProductClick}
+        />
+      </div>
 
       {/* Main Content */}
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

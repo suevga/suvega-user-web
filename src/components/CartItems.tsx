@@ -15,7 +15,7 @@ const CartItems = () => {
 
   return (
   <div className="space-y-4 w-full">
-    <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">My Cart</h1>
+    <h1 className="text-xl md:text-2xl lg:text-3xl font-bold lg:pt-18">My Cart</h1>
     <h2 className="text-base md:text-lg lg:text-xl font-bold text-gray-500">
       Delivery in 15 minutes
     </h2>

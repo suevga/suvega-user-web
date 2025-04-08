@@ -6,6 +6,8 @@ import { useApiStore } from '../hooks/useApiStore';
 import { AlertCircle, CreditCard, Truck, MapPin, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'react-toastify'; 
 import useOrderStore from '../store/useOrderStore';
+import SearchBar from '../components/SearchBar';
+import useProductStore from '../store/useProductStore';
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,13 +19,26 @@ const CheckoutPage: React.FC = () => {
   } = useCartStore();
   const { userData } = useUserStore();
   const { createOrder } = useApiStore();
+  const { products } = useProductStore();
 
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'upi'>('cash');
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchActive, setIsSearchActive] = useState(false);
 
   const defaultAddress = userData?.address?.[0];
+  
+  // Filter products for search
+  const filteredProducts = products.filter(p => 
+    p.productName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/product/${productId}`);
+  };
+  
   const formatAddress = () => {
     const selectedAddressData = addresses.find(addr => addr._id === selectedAddress);
     
@@ -129,14 +144,17 @@ const CheckoutPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 min-h-screen">
       <div className="grid md:grid-cols-2 gap-8">
-        <div className="flex items-center h-14 mb-2 shadow">
+        {/* Header */}
+      <div className="fixed top-0 left-0 right-0 bg-white p-4 z-10 sm:hidden">
+        <div className="flex items-center h-14 mb-2">
           <button 
-            onClick={() => window.history.back()}
+            onClick={() => navigate('/')}
             className="mr-3"
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
           </button>
           
+          {/* Location Info */}
           <div className="flex-1">
             <div className="flex flex-col">
               <h1 className="text-sm font-medium">Delivery in 15 minutes</h1>
@@ -147,6 +165,20 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Search Bar - Only visible on mobile */}
+        <SearchBar
+          className="w-full"
+          isMobile={true}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          isSearchActive={isSearchActive}
+          setIsSearchActive={setIsSearchActive}
+          filteredProducts={filteredProducts}
+          onProductClick={handleProductClick}
+        />
+      </div>
+      <br/>
+      <br/>
         {/* Order Summary */}
         <h2 className="text-lg font-bold mb-6">Order Summary</h2>
         <div className="bg-white rounded-lg shadow-md p-2">
@@ -262,24 +294,46 @@ const CheckoutPage: React.FC = () => {
             </div>
           )}
 
-          {/* Order Button */}
-          <button
-            onClick={handleCreateOrder}
-            className={`w-full mt-6 py-2 text-sm rounded-lg transition-colors flex items-center justify-center cursor-pointer ${
-              isPlaceOrderDisabled
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-primary text-white hover:bg-secondary'
-            }`}
-            disabled={isPlaceOrderDisabled}
-          >
-            {isLoading ? (
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-              <Truck className="mr-2" />
-            )}
-            {isLoading ? 'Placing Order...' : 'Place Order'}
-          </button>
+          {/* Order Button - For larger screens */}
+          <div className="hidden md:block">
+            <button
+              onClick={handleCreateOrder}
+              className={`w-full mt-6 py-2 text-sm rounded-lg transition-colors flex items-center justify-center cursor-pointer ${
+                isPlaceOrderDisabled
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-primary text-white hover:bg-secondary'
+              }`}
+              disabled={isPlaceOrderDisabled}
+            >
+              {isLoading ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <Truck className="mr-2" />
+              )}
+              {isLoading ? 'Placing Order...' : 'Place Order'}
+            </button>
+          </div>
         </div>
+      </div>
+
+      {/* Fixed Order Button - For mobile screens */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 z-10">
+        <button
+          onClick={handleCreateOrder}
+          className={`w-full py-3 text-sm rounded-lg transition-colors flex items-center justify-center cursor-pointer ${
+            isPlaceOrderDisabled
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-primary text-white hover:bg-secondary'
+          }`}
+          disabled={isPlaceOrderDisabled}
+        >
+          {isLoading ? (
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+          ) : (
+            <Truck className="mr-2" />
+          )}
+          {isLoading ? 'Placing Order...' : 'Place Order'}
+        </button>
       </div>
     </div>
   );

@@ -2,11 +2,26 @@ import { useState } from 'react';
 import { ArrowLeft, Plus, MapPin, Home, Building2, Briefcase } from 'lucide-react';
 import useUserStore from '../store/useUserStore';
 import { AddressForm } from '../components/AddressForm';
-import { Address } from '../types/types';
+import SearchBar from '../components/SearchBar';
+import useProductStore from '../store/useProductStore';
+import { useNavigate } from 'react-router';
 
 const AddressPage = () => {
   const { userData } = useUserStore();
+  const { products } = useProductStore();
+  const navigate = useNavigate();
   const [showAddressForm, setShowAddressForm] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const address = userData?.address?.[0];
+  // Filter products for search
+  const filteredProducts = products.filter(p => 
+    p.productName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/product/${productId}`);
+  };
 
   const getAddressIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -19,35 +34,52 @@ const AddressPage = () => {
     }
   };
 
-  const formatAddress = (address: Address) => {
+  const formatAddress = () => {
+    if (!address) return 'Add delivery address';
     const parts = [];
     if (address.addressLine) parts.push(address.addressLine);
-    if (address.landmark) parts.push(address.landmark);
     if (address.city) parts.push(address.city);
-    if (address.pinCode) parts.push(address.pinCode);
     return parts.join(', ');
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16">
-            <button 
-              onClick={() => window.history.back()}
-              className="mr-3 hover:bg-gray-100 p-2 rounded-full transition-colors"
-              aria-label="Go back"
-            >
-              <ArrowLeft className="w-6 h-6 text-gray-700" />
-            </button>
-            <h1 className="text-xl font-semibold text-gray-900">Manage Addresses</h1>
+      <div className="fixed top-0 left-0 right-0 bg-white p-4 z-10 sm:hidden">
+        <div className="flex items-center h-14 mb-2">
+          <button 
+            onClick={() => navigate(-1)}
+            className="mr-3"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          
+          {/* Location Info */}
+          <div className="flex-1">
+            <div className="flex flex-col">
+              <h1 className="text-sm font-medium">Delivery in 15 minutes</h1>
+              <p className="text-xs text-gray-500">
+                {formatAddress()}
+              </p>
+            </div>
           </div>
         </div>
-      </header>
+
+        {/* Search Bar - Only visible on mobile */}
+        <SearchBar
+          className="w-full"
+          isMobile={true}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          isSearchActive={isSearchActive}
+          setIsSearchActive={setIsSearchActive}
+          filteredProducts={filteredProducts}
+          onProductClick={handleProductClick}
+        />
+      </div>
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-20">
         {/* Add New Address Button */}
         <button
           onClick={() => setShowAddressForm(true)}
@@ -86,7 +118,7 @@ const AddressPage = () => {
                     </div>
                     
                     <p className="text-sm text-gray-600 mb-2">
-                      {formatAddress(address)}
+                      {formatAddress()}
                     </p>
                   </div>
                 </div>
