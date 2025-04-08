@@ -38,7 +38,10 @@ const OnboardPage = () => {
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(phoneNumber)) {
+    // Extract the phone number without the prefix for validation
+    const numberOnly = phoneNumber.replace(/\D/g, '').slice(-10);
+    
+    if (!phoneRegex.test(numberOnly)) {
       setError('Please enter a valid 10-digit phone number');
       return;
     }
@@ -48,12 +51,12 @@ const OnboardPage = () => {
     }
     setLoading(true)
     try {
-      console.log("phone number before request::", phoneNumber);
+      console.log("phone number before request::", numberOnly);
       console.log("email before request::", user?.emailAddresses[0]?.emailAddress);
       
       // First check if user already exists
       const userExists = await checkUserRegisteredOrNot(
-        phoneNumber,
+        numberOnly,
         user?.emailAddresses[0]?.emailAddress || ''
       );
 
@@ -62,7 +65,7 @@ const OnboardPage = () => {
       if (userExists.isRegistered) {
         toast.done("user already registered")
         setUserData(userExists.user);
-        setStoredPhoneNumber(phoneNumber);
+        setStoredPhoneNumber(numberOnly);
         navigate('/');
         return;
       }
@@ -78,7 +81,7 @@ const OnboardPage = () => {
       try {
         const registeredUser = await registerUser(
           user?.emailAddresses[0]?.emailAddress || '',
-          phoneNumber,
+          numberOnly,
           locationData
         );
         
@@ -88,21 +91,21 @@ const OnboardPage = () => {
         if (registeredUser) {
           toast.done("user registered sucessfully")
           setUserData(registeredUser);
-          setStoredPhoneNumber(phoneNumber);
+          setStoredPhoneNumber(numberOnly);
           navigate('/');
           return;
         }
-        console.log("phone number from use state in onboard::", phoneNumber);
+        console.log("phone number from use state in onboard::", numberOnly);
       } catch (registerError) {
         setUserData({
           ...userData,
-          phoneNumber: phoneNumber,
+          phoneNumber: numberOnly,
         } as any);
-        setStoredPhoneNumber(phoneNumber);
+        setStoredPhoneNumber(numberOnly);
         toast.error("error when user register")
         navigate('/');
       }
-      setStoredPhoneNumber(phoneNumber);
+      setStoredPhoneNumber(numberOnly);
     } catch (err) {
       console.error("Registration error:", err);
       setError('Something went wrong. Please try again.');
@@ -128,17 +131,23 @@ const OnboardPage = () => {
             >
               Phone Number
             </label>
-            <input
-              id="phone"
-              type="tel"
-              placeholder="Enter your 10-digit phone number"
-              value={phoneNumber}
-              onChange={(e) => {
-                setError('');
-                setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10));
-              }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
+            <div className="flex">
+              <div className="flex items-center justify-center px-3 py-2 bg-gray-100 border border-r-0 border-gray-300 rounded-l-md">
+                +91
+              </div>
+              <input
+                id="phone"
+                type="tel"
+                placeholder="Enter your 10-digit phone number"
+                value={phoneNumber.startsWith('+91') ? phoneNumber.slice(3) : phoneNumber}
+                onChange={(e) => {
+                  setError('');
+                  const inputValue = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setPhoneNumber(inputValue);
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+            </div>
             {error && (
               <p className="text-utility-text text-sm">{error}</p>
             )}
