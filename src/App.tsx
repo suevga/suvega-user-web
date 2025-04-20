@@ -33,6 +33,8 @@ import ServiceAreaPopup from './components/ServiceAreaPopUp';
 import { HelmetProvider } from 'react-helmet-async';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
+import StoreHoursPopup from './components/StoreHoursPopup';
+import { useStoreHours } from './hooks/useStoreHours';
 
 
 const publishableKey = envConfig.clerkPulishableKey;
@@ -91,10 +93,12 @@ const ProfilePageWithCart = withCartIndicator(ProfilePage);
 const OrderHistoryPageWithCart = withCartIndicator(OrderHistory)
 const AddressPageWithCart = withCartIndicator(AddressPage)
 
-function App() {
+function AppContent() {
   const { latitude, longitude, error, requestLocation } = useLocationHook();
   const { findNearestStore } = useApiStore();
-
+  const { isOpen, nextOpenTime } = useStoreHours();
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
 
   console.log("latitude in app loading::", latitude);
   console.log("longitude in app loading::", longitude);
@@ -122,122 +126,138 @@ function App() {
     }
   };
 
+  if (error) {
+    return (
+      <LocationError
+        message={error}
+        onRetry={requestLocation}
+        onOpenSettings={handleOpenSettings}
+      />
+    );
+  }
+
+  // Allow access to login page even when store is closed
+  if (!isOpen && !isLoginPage) {
+    return <StoreHoursPopup nextOpenTime={nextOpenTime} />;
+  }
+
+  return (
+    <div className="relative min-h-screen flex flex-col">
+      <ServiceAreaPopup/>
+      
+      {/* Global Navbar for large screens only */}
+      <div className="hidden sm:block">
+        <Navbar />
+      </div>
+      
+      <div className="flex-grow">
+        <Routes>
+          <Route 
+            path="/onboard" 
+            element={
+              <ProtectedRoute>
+                <OnboardPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/" element={
+            <ProtectedRoute>
+              <HomePageWithCart />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/login" element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          } />
+
+          <Route 
+            path="/categories" 
+            element={
+              <ProtectedRoute>
+                <CategoryPageWithCart />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/categories/:categoryId" 
+            element={
+              <ProtectedRoute>
+                <CategoryPageWithCart />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/cart" 
+            element={
+              <ProtectedRoute>
+                <CartPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <ProfilePageWithCart />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/address" 
+            element={
+              <ProtectedRoute>
+                <AddressPageWithCart />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/orders" 
+            element={
+              <ProtectedRoute>
+                <OrderHistoryPageWithCart />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/checkout" 
+            element={
+              <ProtectedRoute>
+                <CheckoutPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/product/:productId" element={
+            <ProtectedRoute>
+              <SingleProductPageWithCart />
+            </ProtectedRoute>
+          } />
+          <Route path="*" element={
+            <SignedIn>
+              <Navigate to="/" replace />
+            </SignedIn>
+          } />
+        </Routes>
+      </div>
+      
+      <SignedIn>
+        <Footer />
+      </SignedIn>
+    </div>
+  );
+}
+
+function App() {
   return (
     <HelmetProvider>
       <ClerkProvider publishableKey={publishableKey}>
         <Router>
-        {error ? (
-          <LocationError
-          message={error}
-          onRetry={requestLocation}
-          onOpenSettings={handleOpenSettings}
-          />
-        ) : (
-          <div className="relative min-h-screen flex flex-col">
-            <ServiceAreaPopup/>
-            {/* Global Navbar for large screens only */}
-            <div className="hidden sm:block">
-              <Navbar />
-            </div>
-            <div className="flex-grow">
-              <Routes>
-                <Route 
-                  path="/onboard" 
-                  element={
-                    <ProtectedRoute>
-                      <OnboardPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route path="/" element={
-                  <ProtectedRoute>
-                    <HomePageWithCart />
-                  </ProtectedRoute>
-                } />
-
-                <Route path="/login" element={
-                  <PublicRoute>
-                    <LoginPage />
-                  </PublicRoute>
-                } />
-
-                <Route 
-                  path="/categories" 
-                  element={
-                    <ProtectedRoute>
-                      <CategoryPageWithCart />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/categories/:categoryId" 
-                  element={
-                    <ProtectedRoute>
-                      <CategoryPageWithCart />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/cart" 
-                  element={
-                    <ProtectedRoute>
-                      <CartPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile" 
-                  element={
-                    <ProtectedRoute>
-                      <ProfilePageWithCart />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/address" 
-                  element={
-                    <ProtectedRoute>
-                      <AddressPageWithCart />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/orders" 
-                  element={
-                    <ProtectedRoute>
-                      <OrderHistoryPageWithCart />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/checkout" 
-                  element={
-                    <ProtectedRoute>
-                      <CheckoutPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route path="/product/:productId" element={
-                  <ProtectedRoute>
-                    <SingleProductPageWithCart />
-                  </ProtectedRoute>
-                } />
-                <Route path="*" element={
-                  <SignedIn>
-                    <Navigate to="/" replace />
-                  </SignedIn>
-                } />
-              </Routes>
-            </div>
-            <SignedIn>
-              <Footer />
-            </SignedIn>
-          </div>
-        )}
+          <AppContent />
         </Router>
       </ClerkProvider>
     </HelmetProvider>
-  )
+  );
 }
 
 export default App

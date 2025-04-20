@@ -76,6 +76,8 @@ export const useApiStore = () => {
         email
       })
       if (res) {
+        console.log("response after checking user status::", res.data);
+        
         return res.data.data;
       }
     } catch (error) {
