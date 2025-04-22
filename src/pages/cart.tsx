@@ -9,6 +9,7 @@ import { Address } from '../types/types'; // Make sure to import Address type
 import { toast } from 'react-toastify';
 import SearchBar from '../components/SearchBar';
 import useProductStore from '../store/useProductStore';
+import { Helmet } from 'react-helmet-async';
 
 const CartPage: React.FC = () => {
   const { userData, updateUserData } = useUserStore();
@@ -135,6 +136,22 @@ const CartPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <Helmet>
+        <title>Suvega | Cart</title>
+        <meta name="description" content="View your cart and checkout on Suvega." />
+        <link rel="canonical" href="https://suveganow.com/cart" />
+        <meta property="og:title" content="Suvega | Cart" />
+        <meta property="og:description" content="View your cart and checkout on Suvega." />
+        <meta property="og:image" content="https://suveganow.com/og-image.png" />
+        <meta property="og:url" content="https://suveganow.com/cart" />
+        <meta property="og:site_name" content="Suvega" />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_IN" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Suvega | Cart" />
+        <meta property="og:image:type" content="image/png" />
+      </Helmet>
       <div className="container mx-auto px-3 md:px-4 pb-28">
         <div className="max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
           {/* Header Section */}

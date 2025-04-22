@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import useOrderStore from '../store/useOrderStore';
 import SearchBar from '../components/SearchBar';
 import useProductStore from '../store/useProductStore';
+import { Helmet } from 'react-helmet-async';
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -143,6 +144,18 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 min-h-screen">
+      <Helmet>
+        <title>Suvega | Checkout</title>
+        <meta name="description" content="Checkout and place your order on Suvega." />
+        <link rel="canonical" href="https://suveganow.com/checkout" />
+        <meta property="og:title" content="Suvega | Checkout" />
+        <meta property="og:description" content="Checkout and place your order on Suvega." />
+        <meta property="og:image" content="https://suveganow.com/og-image.png" />
+        <meta property="og:url" content="https://suveganow.com/checkout" />
+        <meta property="og:site_name" content="Suvega" />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_IN" />
+      </Helmet>
       <div className="grid md:grid-cols-2 gap-8">
         {/* Header */}
       <div className="fixed top-0 left-0 right-0 bg-white p-4 z-10 sm:hidden">

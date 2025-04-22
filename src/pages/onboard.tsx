@@ -7,7 +7,7 @@ import { useApiStore } from '../hooks/useApiStore';
 import { Loader2 } from 'lucide-react';
 import { LocationData } from '../types/types';
 import { toast } from 'react-toastify';
-
+import { Helmet } from 'react-helmet-async';
 
 const OnboardPage = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -116,6 +116,12 @@ const OnboardPage = () => {
 
   return (
     <div className="w-screen min-h-screen flex items-center justify-center bg-primary-background">
+      <Helmet>
+        <title>Suvega | Complete Your Profile</title>
+        <meta name="description" content="Complete your profile to continue shopping on Suvega." />
+        <link rel="canonical" href="https://suveganow.com/onboard" />
+        
+      </Helmet>
       <div className="w-full max-w-md mx-4 bg-white rounded-lg shadow-lg p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-center text-primary-text">

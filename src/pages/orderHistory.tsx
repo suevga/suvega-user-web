@@ -8,7 +8,7 @@ import useUserStore from '../store/useUserStore';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import SearchBar from '../components/SearchBar';
-
+import { Helmet } from 'react-helmet-async';
 type OrderStatus = "pending" | "accepted" | "rejected" | "pickup" | "delivered" | "cancelled";
 
 // Remove our custom OrderUpdate interface and use any for now
@@ -282,6 +282,12 @@ const OrderHistory = () => {
 
   return (
     <div className="container mx-auto px-5 py-6">
+      <Helmet>
+        <title>Suvega | Order History</title>
+        <meta name="description" content="View your order history on Suvega." />
+        <link rel="canonical" href="https://suveganow.com/order-history" />
+        
+      </Helmet>
       <div className="fixed top-0 left-0 right-0 bg-white p-5 z-10 sm:hidden shadow-sm">
         <div className="flex items-center h-14 mb-3">
           <button 

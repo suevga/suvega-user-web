@@ -5,6 +5,7 @@ import { AddressForm } from '../components/AddressForm';
 import SearchBar from '../components/SearchBar';
 import useProductStore from '../store/useProductStore';
 import { useNavigate } from 'react-router';
+import { Helmet } from 'react-helmet-async';
 
 const AddressPage = () => {
   const { userData } = useUserStore();
@@ -44,6 +45,18 @@ const AddressPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Helmet>
+        <title>Suvega | Address</title>
+        <meta name="description" content="Add or manage your delivery address on Suvega." />
+        <link rel="canonical" href="https://suveganow.com/address" />
+        <meta property="og:title" content="Suvega | Address" />
+        <meta property="og:description" content="Add or manage your delivery address on Suvega." />
+        <meta property="og:image" content="https://suveganow.com/og-image.png" />
+        <meta property="og:url" content="https://suveganow.com/address" />
+        <meta property="og:site_name" content="Suvega" />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_IN" />
+      </Helmet>
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 bg-white p-4 z-10 sm:hidden">
         <div className="flex items-center h-14 mb-2">

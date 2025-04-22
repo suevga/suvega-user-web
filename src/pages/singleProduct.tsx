@@ -7,6 +7,7 @@ import SearchBar from '../components/SearchBar';
 import ImageViewer from '../components/ImageViewer';
 import CustomButton from '../components/CustomButton';
 import useUserStore from '../store/useUserStore';
+import { Helmet } from 'react-helmet-async';
 
 const SingleProductPage = () => {
   const { productId } = useParams();
@@ -99,6 +100,22 @@ const SingleProductPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col pb-16 sm:pb-0">
+      <Helmet>
+        <title>Suvega | {product.productName}</title>
+        <meta name="description" content={`Buy ${product.productName} online at the best price on Suvega.`} />
+        <link rel="canonical" href={`https://suveganow.com/product/${product._id}`} />
+        <meta property="og:title" content={`Suvega | ${product.productName}`} />
+        <meta property="og:description" content={`Buy ${product.productName} online at the best price on Suvega.`} />
+        <meta property="og:image" content={product.productImages[0].imageUrl} />
+        <meta property="og:url" content={`https://suveganow.com/product/${product._id}`} />
+        <meta property="og:site_name" content="Suvega" />
+        <meta property="og:type" content="product" />
+        <meta property="og:locale" content="en_IN" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={`Suvega | ${product.productName}`} />
+        <meta property="og:image:type" content="image/png" />
+      </Helmet>
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 bg-white p-4 z-10 sm:hidden">
         <div className="flex items-center h-14 mb-2">
