@@ -56,14 +56,14 @@ const CategoryPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <Helmet>
-        <title>Suvega | {categories?.find(category => category._id === selectedCategoryId)?.categoryName}</title>
-        <meta name="description" content={`Explore ${categories?.find(category => category._id === selectedCategoryId)?.categoryName} products on Suvega.`} />
+        <title>suvega | categories</title>
+        <meta name="description" content="Explore suvega categories" />
         <link rel="canonical" href={`https://suveganow.com/categories/${selectedCategoryId}`} />
-        <meta property="og:title" content={`Suvega | ${categories?.find(category => category._id === selectedCategoryId)?.categoryName}`} />
-        <meta property="og:description" content={`Explore ${categories?.find(category => category._id === selectedCategoryId)?.categoryName} products on Suvega.`} />
+        <meta property="og:title" content={`suvega | ${categories?.find(category => category._id === selectedCategoryId)?.categoryName}`} />
+        <meta property="og:description" content={`Explore ${categories?.find(category => category._id === selectedCategoryId)?.categoryName} products on suvega.`} />
         <meta property="og:image" content="https://suveganow.com/og-image.png" />
         <meta property="og:url" content={`https://suveganow.com/categories/${selectedCategoryId}`} />
-        <meta property="og:site_name" content="Suvega" />
+        <meta property="og:site_name" content="suvega" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
       </Helmet>

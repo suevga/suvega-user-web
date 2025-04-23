@@ -25,9 +25,9 @@ const ProfilePage = () => {
 
   const formatAddress = (address: Address) => {
     const parts = [];
-    if (address.addressLine) parts.push(address.addressLine);
-    if (address.city) parts.push(address.city);
-    if (address.pinCode) parts.push(address.pinCode);
+    if (address?.addressLine) parts.push(address?.addressLine);
+    if (address?.city) parts.push(address?.city);
+    if (address?.pinCode) parts.push(address?.pinCode);
     return parts.join(', ');
   };
 
@@ -42,14 +42,14 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Helmet>
-        <title>Suvega | My Profile</title>
-        <meta name="description" content="View your profile information on Suvega." />
+        <title>suvega | My Profile</title>
+        <meta name="description" content="View your profile information on suvega." />
         <link rel="canonical" href="https://suveganow.com/profile" />
-        <meta property="og:title" content="Suvega | My Profile" />
-        <meta property="og:description" content="View your profile information on Suvega." />
+        <meta property="og:title" content="suvega | My Profile" />
+        <meta property="og:description" content="View your profile information on suvega." />
         <meta property="og:image" content="https://suveganow.com/og-image.png" />
         <meta property="og:url" content="https://suveganow.com/profile" />
-        <meta property="og:site_name" content="Suvega" />
+        <meta property="og:site_name" content="suvega" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
       </Helmet>

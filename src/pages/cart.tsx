@@ -137,19 +137,19 @@ const CartPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Helmet>
-        <title>Suvega | Cart</title>
-        <meta name="description" content="View your cart and checkout on Suvega." />
+        <title>suvega | Cart</title>
+        <meta name="description" content="View your cart and checkout on suvega." />
         <link rel="canonical" href="https://suveganow.com/cart" />
-        <meta property="og:title" content="Suvega | Cart" />
-        <meta property="og:description" content="View your cart and checkout on Suvega." />
+        <meta property="og:title" content="suvega | Cart" />
+        <meta property="og:description" content="View your cart and checkout on suvega." />
         <meta property="og:image" content="https://suveganow.com/og-image.png" />
         <meta property="og:url" content="https://suveganow.com/cart" />
-        <meta property="og:site_name" content="Suvega" />
+        <meta property="og:site_name" content="suvega" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="Suvega | Cart" />
+        <meta property="og:image:alt" content="suvega | Cart" />
         <meta property="og:image:type" content="image/png" />
       </Helmet>
       <div className="container mx-auto px-3 md:px-4 pb-28">
@@ -235,7 +235,7 @@ const CartPage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <p className="text-primary-text mb-4 text-sm font-bold">No addresses found</p>
+            <p className="text-primary-text mb-4 text-sm font-bold">No addresses found | please add a new address to place an order</p>
           )}
 
           {showAddressForm && (
@@ -247,7 +247,7 @@ const CartPage: React.FC = () => {
             <div className="max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto flex flex-col gap-3">
               <button
                 onClick={handleAddAddress}
-                className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-primary-text font-medium 
+                className="w-full py-2.5 px-4 border border-primary rounded-lg text-primary-text font-medium 
                          hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 + Add New Address

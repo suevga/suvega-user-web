@@ -117,8 +117,8 @@ const OnboardPage = () => {
   return (
     <div className="w-screen min-h-screen flex items-center justify-center bg-primary-background">
       <Helmet>
-        <title>Suvega | Complete Your Profile</title>
-        <meta name="description" content="Complete your profile to continue shopping on Suvega." />
+        <title>suvega | Complete Your Profile</title>
+        <meta name="description" content="Complete your profile to continue shopping on suvega." />
         <link rel="canonical" href="https://suveganow.com/onboard" />
         
       </Helmet>

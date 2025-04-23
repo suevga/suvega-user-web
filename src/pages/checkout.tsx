@@ -145,14 +145,14 @@ const CheckoutPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 min-h-screen">
       <Helmet>
-        <title>Suvega | Checkout</title>
-        <meta name="description" content="Checkout and place your order on Suvega." />
+        <title>suvega | Checkout</title>
+        <meta name="description" content="Checkout and place your order on suvega." />
         <link rel="canonical" href="https://suveganow.com/checkout" />
-        <meta property="og:title" content="Suvega | Checkout" />
-        <meta property="og:description" content="Checkout and place your order on Suvega." />
+        <meta property="og:title" content="suvega | Checkout" />
+        <meta property="og:description" content="Checkout and place your order on suvega." />
         <meta property="og:image" content="https://suveganow.com/og-image.png" />
         <meta property="og:url" content="https://suveganow.com/checkout" />
-        <meta property="og:site_name" content="Suvega" />
+        <meta property="og:site_name" content="suvega" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
       </Helmet>

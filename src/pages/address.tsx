@@ -46,14 +46,14 @@ const AddressPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Helmet>
-        <title>Suvega | Address</title>
-        <meta name="description" content="Add or manage your delivery address on Suvega." />
+        <title>suvega | Address</title>
+        <meta name="description" content="Add or manage your delivery address on suvega." />
         <link rel="canonical" href="https://suveganow.com/address" />
-        <meta property="og:title" content="Suvega | Address" />
-        <meta property="og:description" content="Add or manage your delivery address on Suvega." />
+        <meta property="og:title" content="suvega | Address" />
+        <meta property="og:description" content="Add or manage your delivery address on suvega." />
         <meta property="og:image" content="https://suveganow.com/og-image.png" />
         <meta property="og:url" content="https://suveganow.com/address" />
-        <meta property="og:site_name" content="Suvega" />
+        <meta property="og:site_name" content="suvega" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
       </Helmet>

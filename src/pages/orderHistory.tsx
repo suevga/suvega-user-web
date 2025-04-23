@@ -283,8 +283,8 @@ const OrderHistory = () => {
   return (
     <div className="container mx-auto px-5 py-6">
       <Helmet>
-        <title>Suvega | Order History</title>
-        <meta name="description" content="View your order history on Suvega." />
+        <title>suvega | Order History</title>
+        <meta name="description" content="View your order history on suvega." />
         <link rel="canonical" href="https://suveganow.com/order-history" />
         
       </Helmet>
