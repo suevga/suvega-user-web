@@ -10,9 +10,10 @@ import { toast } from 'react-toastify';
 import SearchBar from '../components/SearchBar';
 import useProductStore from '../store/useProductStore';
 import { Helmet } from 'react-helmet-async';
+import { useApiStore } from '../hooks/useApiStore';
 
 const CartPage: React.FC = () => {
-  const { userData, updateUserData } = useUserStore();
+  const { userData, updateUserData, setUserData } = useUserStore();
   const { products } = useProductStore();
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
@@ -21,6 +22,7 @@ const CartPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
+  const { getUserDetails } = useApiStore();
   
   // Safely get addresses with strict type checking
   const addresses: Address[] = userData?.address ?? [];
@@ -33,6 +35,22 @@ const CartPage: React.FC = () => {
   const handleProductClick = (productId: string) => {
     navigate(`/product/${productId}`);
   };
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      if (!userData?._id) {
+        throw new Error('userID are required');
+      }
+      const response = await getUserDetails(
+        userData?._id
+      );
+      if (response) {
+        console.log("response in cart page::", response);
+        setUserData(response);
+      }
+    }
+    fetchAddress();
+  },[])
 
   // Effect to handle automatic address selection
   useEffect(() => {

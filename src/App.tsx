@@ -95,7 +95,7 @@ const AddressPageWithCart = withCartIndicator(AddressPage)
 
 function AppContent() {
   const { latitude, longitude, error, requestLocation } = useLocationHook();
-  const { findNearestStore } = useApiStore();
+  const { findNearestStore, fetchDeliveryCharge } = useApiStore();
   const { isOpen, nextOpenTime } = useStoreHours();
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
@@ -105,6 +105,11 @@ function AppContent() {
   
   useEffect(() => {
     requestLocation(); // Always fetch location on mount
+    
+    // Fetch delivery charge on app load, regardless of location
+    fetchDeliveryCharge().catch(error => {
+      console.error("Error fetching delivery charge:", error);
+    });
   }, []);
 
   

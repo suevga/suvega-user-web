@@ -13,7 +13,8 @@ const BillDetails = () => {
   console.log("total price in original price::", subtotalBeforeDiscount);
   console.log("total discount price after discount::", subtotalAfterDiscount);
   console.log("total discount percentage after discount::", savingsPercentage);
-  
+  console.log("delivery charge::", deliveryCharge);
+  console.log("total amount::", totalAmount);
   return items.length > 0 ? (
     <div className="space-y-4">
       <h2 className="font-extrabold text-base md:text-lg lg:text-xl underline mt-6">

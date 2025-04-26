@@ -4,6 +4,7 @@ import { LocationData, OrderData, UserData } from '../types/types';
 import useUserStore from '../store/useUserStore';
 import useCategoryStore from '../store/useCategoryStore';
 import useProductStore from '../store/useProductStore';
+import useCartStore from '../store/useCartStore';
 
 
 export const useApiStore = () => {
@@ -31,6 +32,12 @@ export const useApiStore = () => {
         setCategories(response.data.data.categories);
         setProducts(response.data.data.products);
         setOutOfService(false);
+        
+        // Update delivery charge if it's provided from the server
+        if (response.data.data.deliveryCharge !== undefined) {
+          useCartStore.getState().updateDeliveryCharge(response.data.data.deliveryCharge);
+        }
+        
         return true;
       } else {
         console.log("No darkstores found within 5km radius");
@@ -48,6 +55,24 @@ export const useApiStore = () => {
       setLoading(false);
     }
   }, [setDarkStore, setCategories, setProducts, setOutOfService]);
+
+  // Add a new function to fetch delivery charge separately
+  const fetchDeliveryCharge = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get('/api/v1/settings/delivery-charge');
+      if (response.data && response.data.data && response.data.data.deliveryCharge !== undefined) {
+        useCartStore.getState().updateDeliveryCharge(response.data.data.deliveryCharge);
+        return response.data.data.deliveryCharge;
+      }
+      return null;
+    } catch (err) {
+      setError('Failed to fetch delivery charge');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const registerUser = useCallback(async (email:string, phoneNumber: string, location: LocationData) => {
     setLoading(true);
@@ -175,6 +200,7 @@ export const useApiStore = () => {
     location,
     order,
     findNearestStore,
+    fetchDeliveryCharge,
     checkUserRegisteredOrNot,
     updateUserDetails,
     getUserDetails,

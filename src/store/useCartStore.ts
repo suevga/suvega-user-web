@@ -17,6 +17,7 @@ export interface CartState {
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  updateDeliveryCharge: (charge: number) => void;
   
   // Calculation methods
   getSubtotalBeforeDiscount: () => number;
@@ -35,7 +36,7 @@ const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
-      deliveryCharge: 25,
+      deliveryCharge: 19,
       maxQuantityPerItem: 5,
 
       addToCart: (item) => set((state) => {
@@ -87,6 +88,8 @@ const useCartStore = create<CartState>()(
       }),
 
       clearCart: () => set({ items: [] }),
+      
+      updateDeliveryCharge: (charge) => set({ deliveryCharge: charge }),
 
       getSubtotalBeforeDiscount: () => {
         const items = get().items;
