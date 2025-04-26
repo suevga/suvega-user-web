@@ -40,7 +40,7 @@ class SocketService {
         console.log('Connecting to socket server:', envConfig.apiUrl || 'http://localhost:8080');
         
         // Create socket with proper configuration
-        this.socket = io("http://localhost:8080", {
+        this.socket = io(envConfig.apiUrl, {
           query: { 
             type: "user", 
             userId 
