@@ -11,14 +11,13 @@ import { toast } from 'react-toastify';
 export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [registrationChecked, setRegistrationChecked] = useState<boolean>(false);
   const { phoneNumber, setUserData, userData } = useUserStore();
   const [tempUserId, setTempUserId] = useState<string | null>(null);
   const { checkUserRegisteredOrNot, registerUser, updateUserDetails } = useApiStore();
   const { user } = useUser();
   const { latitude, longitude } = useLocationStore();
 
-  console.log("user data in address form::", userData);
-  
   const { register, handleSubmit, formState: { errors } } = useForm<AddressFormData>({
     defaultValues: {
       type: 'Home',
@@ -49,7 +48,6 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
   
     console.log("updated user after adding address::", updatedUser);
     
-    
     if (!updatedUser) {
       toast.error('Failed to update address');
       throw new Error('Failed to update address');
@@ -60,43 +58,60 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
   };
 
   const handleUserRegistration = async () => {
+    // Return early if we don't have required data
     if (!phoneNumber || !user?.emailAddresses[0]?.emailAddress) {
-      toast.error("phone number and email are required");
+      toast.error("Phone number and email are required");
       throw new Error('Phone number and email are required');
     }
-
-    const userCheck = await checkUserRegisteredOrNot(
-      phoneNumber,
-      user.emailAddresses[0].emailAddress
-    );
-
-    if (userCheck.isRegistered) {
-      toast.success("User already registered");
-      setTempUserId(userCheck.user._id);
-      setUserData(userCheck.user);
-      return userCheck.user;
+    
+    // If user is already set in store or temp ID exists, no need to check again
+    if (userData?._id || tempUserId) {
+      console.log("User already set in store or temp ID exists");
+      return userData || { _id: tempUserId };
     }
-
-    const location: LocationData = {
-      type: "Point",
-      coordinates: [longitude, latitude]
-    };
-
-    const registeredUser = await registerUser(
-      user.emailAddresses[0].emailAddress,
-      phoneNumber,
-      location
-    );
-
-    if (!registeredUser) {
-      toast.error('Failed to register user');
-      throw new Error('Failed to register user');
+  
+    try {
+      const userCheck = await checkUserRegisteredOrNot(
+        phoneNumber,
+        user.emailAddresses[0].emailAddress
+      );
+    
+      console.log("User check result:", userCheck);
+    
+      if (userCheck.isRegistered) {
+        // If the user is already registered, set the user data and temp user ID
+        console.log("User already registered");
+        setTempUserId(userCheck.user._id);
+        setUserData(userCheck.user);
+        return userCheck.user; // Return the existing user
+      }
+    
+      // If the user is not registered, proceed with registration
+      const location: LocationData = {
+        type: "Point",
+        coordinates: [longitude, latitude]
+      };
+    
+      const registeredUser = await registerUser(
+        user.emailAddresses[0].emailAddress,
+        phoneNumber,
+        location
+      );
+    
+      if (!registeredUser) {
+        toast.error('Failed to register user');
+        throw new Error('Failed to register user');
+      }
+    
+      console.log("User registered successfully");
+      setTempUserId(registeredUser._id);
+      setUserData(registeredUser);
+      return registeredUser;
+    } finally {
+      setRegistrationChecked(true);
     }
-    toast.success("User registered successfully");
-    setTempUserId(registeredUser._id);
-    setUserData(registeredUser);
-    return registeredUser;
   };
+  
   console.log("temp user id::", tempUserId);
   
   const onSubmit = async (formData: AddressFormData) => {
@@ -109,12 +124,19 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
 
     setLoading(true);
     try {
-        await handleUserRegistration();
+      // If we haven't checked registration status yet, do it now
+      let registeredUser = userData;
+      if (!registrationChecked) {
+        registeredUser = await handleUserRegistration();
+      }
+      
+      if (!registeredUser && !tempUserId) {
+        throw new Error("Failed to retrieve or register user");
+      }
 
-        await handleUpdateAddress(formData);
-
-        toast.success("Address added successfully");
-        onClose();
+      await handleUpdateAddress(formData);
+      toast.success("Address added successfully");
+      onClose();
     } catch (error) {
       console.error("Error in address submission:", error);
       setError(error instanceof Error ? error.message : "Failed to save address. Please try again.");
@@ -123,9 +145,17 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onClose }) => {
     }
   };
 
+  // Check registration status on mount, but only once
   useEffect(() => {
-    handleUserRegistration();
-  }, []);
+    if (!registrationChecked && phoneNumber && user?.emailAddresses[0]?.emailAddress) {
+      handleUserRegistration()
+        .catch(err => {
+          console.error("Error checking registration status:", err);
+          // Don't show toast here as it might be confusing on initial load
+        });
+    }
+  }, [phoneNumber, user, registrationChecked]);
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4 text-center">
