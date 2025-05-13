@@ -18,7 +18,7 @@ import CategoryPage from './pages/categories';
 import { envConfig } from './utilits/envConfig';
 import LoginPage from './pages/login';
 import SingleProductPage from './pages/singleProduct';
-import { useLocation  as useLocationHook } from './hooks/useLocation';
+import { useLocation as useLocationHook } from './hooks/useLocation';
 import { LocationError } from './components/LocationError';
 import { useApiStore } from './hooks/useApiStore';
 import CartPage from './pages/cart';
@@ -35,7 +35,10 @@ import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import StoreHoursPopup from './components/StoreHoursPopup';
 import { useStoreHours } from './hooks/useStoreHours';
-
+import PrivacyPolicyPage from './pages/privacy-policy';
+import TermsConditionsPage from './pages/terms-conditions';
+import ContactUsPage from './pages/contact-us';
+import AboutUsPage from './pages/about-us';
 
 const publishableKey = envConfig.clerkPulishableKey;
 
@@ -237,6 +240,18 @@ function AppContent() {
             <ProtectedRoute>
               <SingleProductPageWithCart />
             </ProtectedRoute>
+          } />
+          <Route path="/privacy-policy" element={
+            <PrivacyPolicyPage />
+          } />
+          <Route path="/terms-conditions" element={
+            <TermsConditionsPage />
+          } />
+          <Route path="/contact-us" element={
+            <ContactUsPage />
+          } />
+          <Route path="/about-us" element={
+            <AboutUsPage />
           } />
           <Route path="*" element={
             <SignedIn>

@@ -322,19 +322,19 @@ const Navbar = () => {
                     my orders
                   </Link>
                   <Link
-                    to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+                    to="/about-us"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     about us
                   </Link>
                   <Link
-                    to={'https://docs.google.com/document/d/e/2PACX-1vTHQG99Ur0oFmGIfzeMo48MY2DL2mB2aN5O59jT-Yg4pthe7RvQKbfaqIGSs9Ge6abmtNA1j395PJXo/pub'}
+                    to="/privacy-policy"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     privacy-policy
                   </Link>
                   <Link
-                    to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+                    to="/contact-us"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     contact-us
@@ -415,19 +415,19 @@ const Navbar = () => {
                     my orders
                   </Link>
                   <Link
-                    to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+                    to="/about-us"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     about us
                   </Link>
                   <Link
-                    to={'https://docs.google.com/document/d/e/2PACX-1vTHQG99Ur0oFmGIfzeMo48MY2DL2mB2aN5O59jT-Yg4pthe7RvQKbfaqIGSs9Ge6abmtNA1j395PJXo/pub'}
+                    to="/privacy-policy"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     privacy-policy
                   </Link>
                   <Link
-                    to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+                    to="/contact-us"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     contact-us

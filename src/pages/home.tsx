@@ -14,7 +14,7 @@ const HomePage = () => {
   return (
     <div className="mx-auto px-2 py-8">
       <Helmet>
-        <title>suvega | Buy Fresh Groceries Online</title>
+        <title>Suvega | Get everything under 15 minutes</title>
         <meta name="description" content="suvega is a quick-commerce platform where you can get everything under 15 minutes in your city. we value your time and convenience." />
         <link rel="canonical" href="https://suveganow.com" />
         <meta property="og:title" content="suvega | Buy Fresh Groceries Online" />

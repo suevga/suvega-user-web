@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import useCategoryStore from '../store/useCategoryStore';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Facebook, Instagram, Youtube, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   const { categories } = useCategoryStore();
@@ -70,29 +70,48 @@ const Footer = () => {
           )}
         </div>
 
+        {/* Social Media Links */}
+        <div className="border-t pt-6 pb-4">
+          <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Connect With Us</h3>
+          <div className="flex justify-center space-x-6">
+            <a href="https://www.facebook.com/profile.php?viewas=100000686899395&id=61575801386327" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-gray-600 hover:text-blue-600 transition-colors">
+              <Facebook className="w-6 h-6" />
+            </a>
+            <a href="https://www.instagram.com/suveganow" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-gray-600 hover:text-pink-600 transition-colors">
+              <Instagram className="w-6 h-6" />
+            </a>
+            <a href="https://www.linkedin.com/company/suveganow/" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-gray-600 hover:text-blue-400 transition-colors">
+              <Linkedin className="w-6 h-6" />
+            </a>
+            <a href="https://www.youtube.com/@suveganow" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-gray-600 hover:text-red-600 transition-colors">
+              <Youtube className="w-6 h-6" />
+            </a>
+          </div>
+        </div>
+
         {/* Links Section */}
         <div className="border-t pt-6">
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 sm:gap-8 mb-4">
             <Link
-              to={'https://docs.google.com/document/d/e/2PACX-1vTHQG99Ur0oFmGIfzeMo48MY2DL2mB2aN5O59jT-Yg4pthe7RvQKbfaqIGSs9Ge6abmtNA1j395PJXo/pub'}
+              to="/privacy-policy"
               className="text-sm text-gray-600 hover:text-primary underline"
             >
               Privacy Policy
             </Link>
             <Link
-              to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+              to="/terms-conditions"
               className="text-sm text-gray-600 hover:text-primary underline"
             >
               Terms & Conditions
             </Link>
             <Link
-              to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+              to="/about-us"
               className="text-sm text-gray-600 hover:text-primary underline"
             >
               About Us
             </Link>
             <Link
-              to={'https://docs.google.com/document/d/e/2PACX-1vSao2TGyrzJPEONls9UkVlHIQyquDzmP4qmVfoKevu7pqBeUoinBesvGLdD0lBUyxCgCVhs_p3BmmkS/pub'}
+              to="/contact-us"
               className="text-sm text-gray-600 hover:text-primary underline"
             >
               Contact Us
