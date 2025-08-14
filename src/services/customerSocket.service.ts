@@ -30,14 +30,13 @@ class SocketService {
   initialize(userId: string): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        // Clean up any existing connection
         this.cleanup();
         
         this.userId = userId;
         this.connectionState = 'connecting';
         
         console.log(`Initializing socket for userId: ${this.userId}`);
-        console.log('Connecting to socket server:', envConfig.apiUrl || 'http://localhost:8080');
+        console.log('Connecting to socket server:', envConfig.apiUrl);
         
         // Create socket with proper configuration
         this.socket = io(envConfig.apiUrl, {

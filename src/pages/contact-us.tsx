@@ -27,7 +27,7 @@ const ContactUsPage = () => {
     setSubmitError('');
     
     try {
-      // Replace YOUR_FORMSPREE_ENDPOINT with your actual Formspree endpoint
+     
       const response = await fetch(envConfig.formspreeApiKey, {
         method: 'POST',
         headers: {
