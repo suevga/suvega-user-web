@@ -51,6 +51,7 @@ const CustomizedSwiperSlider = () => {
               price={product.price}
               discountPrice={product.discountPrice}
               description={product.description}
+              deliveryTime={product.deliveryTime}
             />
           </SwiperSlide>
         ))}

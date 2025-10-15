@@ -4,6 +4,7 @@ import ImageViewer from './ImageViewer';
 import CustomButton from './CustomButton';
 import React from 'react';
 import { ProductImage } from '../types/types';
+import { formatDeliveryTime } from '../utilits/deliveryTime';
 
 interface ProductCardProps {
   _id: string;
@@ -13,9 +14,10 @@ interface ProductCardProps {
   discountPrice?: number;
   description: string;
   quantity?: number;
+  deliveryTime?: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImages, price, discountPrice }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImages, price, discountPrice, deliveryTime }) => {
   const { items, addToCart, updateQuantity } = useCartStore();
   const cartItem = items.find(item => item._id === _id);
   const quantity = cartItem?.quantity || 0;
@@ -61,14 +63,27 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
             {discountPercentage}% off
           </div>
         )}
-        
+
         {/* Image Container */}
-        <div className="aspect-square w-full bg-gray-50 max-h-[180px] sm:max-h-[200px] lg:max-h-[160px]">
-          <ImageViewer
-            src={convertToSecureUrl(productImages[0].imageUrl)}
-            className="w-full h-full object-contain transition-transform duration-300 hover:scale-110"
-            alt={productName}
-          />
+        <div className="relative aspect-square w-full bg-gray-50 max-h-[180px] sm:max-h-[200px] lg:max-h-[160px]">
+          {productImages?.[0]?.imageUrl ? (
+            <ImageViewer
+              src={convertToSecureUrl(productImages[0].imageUrl)}
+              className="w-full h-full object-contain transition-transform duration-300 hover:scale-110"
+              alt={productName}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+              Image unavailable
+            </div>
+          )}
+
+          {/* Delivery Time Badge (overlay on image) */}
+          {deliveryTime && (
+            <span className="absolute bottom-3 right-2 bg-primary text-white text-[10px] sm:text-xs px-2 py-1 rounded-full">
+              {formatDeliveryTime(deliveryTime)}
+            </span>
+          )}
         </div>
 
         {/* Content Container */}
@@ -79,7 +94,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
           </h2>
 
           {/* Price Section */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
             {discountPrice ? (
               <>
                 <span className="text-sm sm:text-base font-bold text-gray-900">
@@ -99,7 +114,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
           {/* Add to Cart Button */}
           <div className="pt-1 sm:pt-2">
             {quantity === 0 ? (
-              <CustomButton 
+              <CustomButton
                 onClick={handleAddToCart}
                 className="w-full h-8 text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 hover:opacity-90"
               >
@@ -107,8 +122,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
               </CustomButton>
             ) : (
               <div className="flex items-stretch h-8 bg-secondaryBtnColor rounded-lg overflow-hidden">
-                <CustomButton 
-                  onClick={handleDecreaseQuantity} 
+                <CustomButton
+                  onClick={handleDecreaseQuantity}
                   className="flex-1 font-bold flex items-center justify-center text-sm"
                 >
                   −
@@ -118,7 +133,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ _id, productName, productImag
                     {quantity}
                   </span>
                 </div>
-                <CustomButton 
+                <CustomButton
                   onClick={handleIncreaseQuantity}
                   className="flex-1 font-bold flex items-center justify-center text-sm"
                 >

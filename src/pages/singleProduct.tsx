@@ -8,6 +8,7 @@ import ImageViewer from '../components/ImageViewer';
 import CustomButton from '../components/CustomButton';
 import useUserStore from '../store/useUserStore';
 import { Helmet } from 'react-helmet-async';
+import { formatDeliveryTime } from '../utilits/deliveryTime';
 
 const SingleProductPage = () => {
   const { productId } = useParams();
@@ -195,6 +196,13 @@ const SingleProductPage = () => {
             {/* Product Info */}
             <div className="p-4 space-y-4 sm:w-1/2 sm:p-6">
               <h2 className="text-xl font-semibold sm:text-2xl">{product.productName}</h2>
+              
+              {/* Delivery Time Badge */}
+              <div className="inline-block">
+                <span className="bg-primary text-white text-sm px-3 py-1 rounded-full">
+                  {formatDeliveryTime(product.deliveryTime)} delivery
+                </span>
+              </div>
               
               <div className="flex items-baseline gap-2">
                 <div className="flex items-center gap-2">

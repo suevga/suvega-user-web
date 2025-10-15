@@ -55,6 +55,7 @@ export interface Category {
   categoryName: string;
   featuredImage: string;
   description?: string;
+  deliveryTime:string;
 }
 
 export interface CategoryListItemProps {
@@ -72,6 +73,7 @@ export interface Product {
   price: number;
   discountPrice?: number;
   categoryId?: string;
+  deliveryTime?: string;
 }
 
 export interface ProductImage {

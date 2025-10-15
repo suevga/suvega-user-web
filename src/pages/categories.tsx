@@ -146,6 +146,7 @@ const CategoryPage = () => {
                         productImages={product.productImages}
                         price={product.price}
                         discountPrice={product.discountPrice}
+                        deliveryTime={product.deliveryTime}
                       />
                     </div>
                   </div>

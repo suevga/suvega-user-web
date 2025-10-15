@@ -38,6 +38,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ categoryId }) => {
             price={product.price}
             discountPrice={product.discountPrice}
             description={product.description}
+            deliveryTime={product.deliveryTime}
           />
         ))}
       </div>

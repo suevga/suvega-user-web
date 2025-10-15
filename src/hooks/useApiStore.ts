@@ -25,7 +25,7 @@ export const useApiStore = () => {
         latitude: latitude,
         longitude: longitude
       });
-      console.log("response after chceking nearest darkstore::", JSON.stringify(response.data));
+      console.log("response after chceking nearest darkstore::", JSON.stringify(response.data.data.products));
       
       if (response.data.data?.isAvailable) {
         setDarkStore(response.data.data.darkStores);

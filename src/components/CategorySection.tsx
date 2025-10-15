@@ -20,6 +20,7 @@ const CategorySection = () => {
               _id={category._id}
               categoryName={category.categoryName}
               featuredImage={category.featuredImage}
+              deliveryTime={category?.deliveryTime}
             />
           </div>
         ))}
